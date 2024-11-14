@@ -1,7 +1,7 @@
 <h1 align = "center"> NOTADISE </h1>
 
 <p align = "center">
-    <img src = "Logo.png" >
+    <img src = "Logo.png" height = 300>
 </p>
 
 ## ˚ʚ♡ɞ˚ About
