@@ -13,13 +13,18 @@ namespace Notadise
 
             builder.Services.AddDbContext<NotadiseDbContext>(options => options.UseSqlServer(connectionString));
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<NotadiseDbContext>();
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<NotadiseDbContext>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireUppercase = true;
+            });
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
