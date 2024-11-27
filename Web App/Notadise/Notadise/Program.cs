@@ -21,11 +21,6 @@ namespace Notadise
 
             var app = builder.Build();
 
-            builder.Services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireUppercase = true;
-            });
-
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
