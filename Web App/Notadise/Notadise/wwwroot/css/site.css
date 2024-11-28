@@ -20,3 +20,123 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Sidebar container */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #A27FC3;
+    color: #EEEEEE;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    border-right: 2px solid #8A64AD;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-circle {
+    width: 50px;
+    height: 50px;
+    background-color: #8A64AD;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.nav-link {
+    color: #EEEEEE;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+    .nav-link:hover {
+        background-color: #8A64AD;
+    }
+
+hr {
+    border: 1px solid #8A64AD;
+    margin: 20px 0;
+}
+
+.bookmark-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #EEEEEE;
+    font-weight: bold;
+}
+
+.bookmark-item {
+    font-size: 16px;
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+}
+
+    .bookmark-item .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    background-color: #F5F5F5;
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed; /* Ensures it stays fixed in place */
+    top: 0; /* Aligns it to the top of the viewport */
+    left: 0; /* Aligns it to the left of the viewport */
+    width: 250px; /* Width of the sidebar */
+    height: 100vh; /* Full height of the viewport */
+    background-color: #A27FC3;
+    color: #EEEEEE;
+    padding: 20px 15px;
+    border-right: 2px solid #8A64AD;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+.main-content {
+    margin-left: 250px; /* Leaves space for the sidebar */
+    padding: 20px;
+    background-color: #F5F5F5;
+    min-height: 100vh; /* Ensures the content spans full height */
+}
+
+.sidebar-header {
+    text-align: center;
+    background-color: #8A64AD; /* Darker purple background */
+    padding: 20px; /* Adds padding for a clean layout */
+    border-radius: 10px; /* Adds rounded corners */
+    margin-bottom: 20px; /* Space below the header section */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* User Icon */
+.user-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #A27FC3; /* Backup color */
+    margin-bottom: 10px;
+    border: 3px solid #EEEEEE; /* Adds a white border around the icon */
+}
+
+/* Username Text */
+.username {
+    font-size: 16px;
+    color: #EEEEEE;
+    font-weight: bold;
+    margin-top: 5px;
+}

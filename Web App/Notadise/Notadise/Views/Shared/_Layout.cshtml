@@ -8,35 +8,73 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Notadise.styles.css" asp-append-version="true" />
 </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - YourApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    @RenderSection("Styles", required: false)
+</head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Notadise</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial.cshtml" />
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="User Icon" class="user-icon" />
+                    <h5 class="username">Hello, @ViewData["FullName"]</h5>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+                <ul class="nav flex-column mt-4">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Notes" asp-action="NewNote">New Note</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Notes" asp-action="MyNotes">My Notes</a>
+                    </li>
+                </ul>
+
+                <hr />
+
+                <h6 class="bookmark-title">Bookmarks</h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item bookmark-item">
+                        <span class="dot" style="background-color: #79D7F2;"></span> School
+                    </li>
+                    <li class="nav-item bookmark-item">
+                        <span class="dot" style="background-color: #A1DE70;"></span> Work
+                    </li>
+                    <li class="nav-item bookmark-item">
+                        <span class="dot" style="background-color: #F2D679;"></span> University
+                    </li>
+                    <li class="nav-item bookmark-item">
+                        <span class="dot" style="background-color: #F2A7CB;"></span> Art Projects
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                @RenderBody()
+            </main>
+        </div>
+    }
+    else
+    {
+        <!-- Content for logged-out users -->
+        <main class="container">
             @RenderBody()
         </main>
-    </div>
+    }
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Notadise - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
