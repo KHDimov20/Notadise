@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "New Note";
+}
+
+<div class="new-note-container">
+    <div class="note-header">
+        <h1>HEADER <i class="fa fa-pencil" aria-hidden="true"></i></h1>
+        <div class="note-details">
+            <span>16:42</span>
+            <span>875KB</span>
+            <span>November 11</span>
+        </div>
+    </div>
+
+    <div class="note-sections" id="noteSections">
+        <div class="note-section" id="section1">
+            <input type="text" class="section-title" placeholder="Point 1" />
+            <textarea class="section-text" placeholder="Write your text here..."></textarea>
+        </div>
+    </div>
+
+    <button id="addSectionBtn" class="add-section-btn">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+    </button>
+</div>
+
+@section Scripts {
+    <script>
+        // Handle adding new sections
+        let sectionCount = 1;
+
+        document.getElementById('addSectionBtn').addEventListener('click', function () {
+            sectionCount++;
+            const noteSections = document.getElementById('noteSections');
+
+            const newSection = document.createElement('div');
+            newSection.classList.add('note-section');
+            newSection.id = `section${sectionCount}`;
+
+            newSection.innerHTML = `
+                        <input type="text" class="section-title" placeholder="Point ${sectionCount}" />
+                        <textarea class="section-text" placeholder="Write your text here..."></textarea>
+                    `;
+
+            noteSections.appendChild(newSection);
+        });
+    </script>
+}

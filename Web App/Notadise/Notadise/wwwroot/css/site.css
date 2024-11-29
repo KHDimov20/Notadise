@@ -2,6 +2,28 @@ html {
   font-size: 14px;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+
+.container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px; /* Optional, allows responsive layouts */
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Adjust this if needed */
+}
+
+
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -23,16 +45,24 @@ body {
 
 /* Sidebar container */
 .sidebar {
-    width: 250px;
-    height: 100vh;
-    background-color: #A27FC3;
-    color: #EEEEEE;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 15px;
-    border-right: 2px solid #8A64AD;
+    width: 250px; /* Set a fixed or percentage width for the sidebar */
+    min-height: 100vh; /* Ensure the sidebar spans the full height */
+    background-color: #f8f9fa; /* Example background */
+    position: relative; /* Ensures it stays aligned in the layout */
 }
+
+.main-content {
+    flex-grow: 1; /* Ensures it takes the remaining space */
+    padding: 20px; /* Adds padding around the content */
+    overflow: auto; /* Prevents overflow issues */
+}
+
+.d-flex {
+    display: flex; /* Flex container for sidebar and content */
+    align-items: stretch; /* Aligns both sections to full height */
+    width: 100%; /* Ensure the container spans full width */
+}
+
 
 .sidebar-header {
     text-align: center;
@@ -140,3 +170,92 @@ hr {
     font-weight: bold;
     margin-top: 5px;
 }
+
+.new-note-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+    .note-header h1 {
+        font-size: 24px;
+        color: #A27FC3;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .note-header .note-details span {
+        margin-right: 10px;
+        font-size: 14px;
+        color: #888;
+    }
+
+.note-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.note-section {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.section-title {
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    outline: none;
+}
+
+    .section-title::placeholder {
+        color: #ccc;
+        font-weight: normal;
+    }
+
+.section-text {
+    width: 100%;
+    height: 100px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+}
+
+    .section-text::placeholder {
+        color: #ccc;
+    }
+
+.add-section-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: #A27FC3;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 20px auto 0;
+}
+
+    .add-section-btn:hover {
+        background-color: #8A64AD;
+    }
