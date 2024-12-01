@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "My Notes";
+}
+
+<div class="my-notes-container">
+    <h2>My Notes</h2>
+    <div id="savedNotesList"></div>
+</div>
+
+@section Scripts {
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            // Retrieve saved notes from localStorage
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+
+            const notesListContainer = document.getElementById('savedNotesList');
+            notesListContainer.innerHTML = ''; // Clear existing content
+
+            if (savedNotes.length === 0) {
+                notesListContainer.innerHTML = '<p>No notes saved yet.</p>';
+            } else {
+                savedNotes.forEach((note, index) => {
+                    const noteElement = document.createElement('div');
+                    noteElement.classList.add('note-item');
+                    noteElement.innerHTML = `
+                                <h3>${note.header}</h3>
+                                <ul>
+                                    ${note.sections.map(section => `
+                                        <li><strong>${section.title}:</strong> ${section.text}</li>
+                                    `).join('')}
+                                </ul>
+                                <button onclick="editNote(${index})">Edit</button>
+                                <button onclick="deleteNote(${index})">Delete</button>
+                            `;
+                    notesListContainer.appendChild(noteElement);
+                });
+            }
+        });
+
+        function editNote(index) {
+            // Store the index of the note being edited in localStorage
+            localStorage.setItem('editNoteIndex', index);
+            window.location.href = "/Notes/NewNote"; // Redirect to New Note page to edit the note
+        }
+
+        function deleteNote(index) {
+            // Retrieve saved notes from localStorage
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+
+            // Remove the note at the given index
+            savedNotes.splice(index, 1);
+
+            // Save the updated notes back to localStorage
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+
+            // Reload the My Notes page to reflect changes
+            window.location.reload();
+        }
+    </script>
+}
+
+<style>
+    .my-notes-container {
+        padding: 20px;
+    }
+
+    .note-item {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+        .note-item h3 {
+            font-size: 1.5rem;
+        }
+
+        .note-item ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .note-item li {
+            font-size: 1rem;
+        }
+
+        .note-item button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #8A64AD;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .note-item button:hover {
+                background-color: #764DA9;
+            }
+</style>

@@ -2,65 +2,175 @@
     ViewData["Title"] = "New Note";
 }
 
-<head>
-    <!-- Other meta tags and styles -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-</head>
-
 <div class="new-note-container">
-    <!-- Header Section -->
+    <!-- Header -->
     <div class="note-header">
         <input type="text" id="noteHeader" placeholder="HEADER" class="note-header-input" />
     </div>
 
     <!-- Note Sections -->
-    <div class="note-sections" id="noteSections">
-        <div class="note-section" id="section1">
-            <input type="text" class="section-title" placeholder="Point 1" />
-            <textarea class="section-text" placeholder="Write your text here..."></textarea>
-        </div>
-    </div>
+    <div class="note-sections" id="noteSections"></div>
 
-    <!-- Circle Button for Adding Sections -->
+    <!-- Add Section Button -->
     <button id="addSectionBtn" class="add-section-btn">
-        <i class="fas fa-plus"></i> <!-- Font Awesome Plus Icon -->
+        <i class="fas fa-plus"></i>
     </button>
+
+    <!-- Save Button -->
+    <button id="saveNoteBtn" class="save-note-btn">Save</button>
+
+    <!-- Update Button (Initially hidden) -->
+    <button id="updateNoteBtn" class="save-note-btn" style="display: none;">Update</button>
 </div>
 
-<!-- Scripts Section -->
 @section Scripts {
     <script>
-        // Handle adding new sections
-        let sectionCount = 1;
+        let sectionCount = 0;
+        let noteIndexToUpdate = null; // Keeps track of the note being updated
 
+        // Load saved draft on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            const savedHeader = localStorage.getItem('noteHeaderDraft');
+            const savedSections = JSON.parse(localStorage.getItem('noteSectionsDraft'));
+
+            if (savedHeader) document.getElementById('noteHeader').value = savedHeader;
+            if (savedSections) {
+                sectionCount = savedSections.length;
+                const noteSections = document.getElementById('noteSections');
+                savedSections.forEach((section, index) => {
+                    const newSection = createSection(index + 1, section.title, section.text);
+                    noteSections.appendChild(newSection);
+                });
+            }
+
+            // Check if we're updating an existing note
+            const editNoteIndex = localStorage.getItem('editNoteIndex');
+            if (editNoteIndex !== null) {
+                noteIndexToUpdate = editNoteIndex;
+                loadNoteForEditing(noteIndexToUpdate);
+            }
+        });
+
+        // Save draft to localStorage
+        function saveDraft() {
+            const header = document.getElementById('noteHeader').value;
+            const sections = [];
+
+            document.querySelectorAll('.note-section').forEach(section => {
+                const title = section.querySelector('.section-title').value;
+                const text = section.querySelector('.section-text').value;
+                sections.push({ title, text });
+            });
+
+            localStorage.setItem('noteHeaderDraft', header);
+            localStorage.setItem('noteSectionsDraft', JSON.stringify(sections));
+        }
+
+        // Load note data for editing
+        function loadNoteForEditing(index) {
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            const note = savedNotes[index];
+
+            if (note) {
+                document.getElementById('noteHeader').value = note.header;
+                const noteSections = document.getElementById('noteSections');
+                note.sections.forEach((section, i) => {
+                    const newSection = createSection(i + 1, section.title, section.text);
+                    noteSections.appendChild(newSection);
+                });
+
+                // Show update button and hide save button
+                document.getElementById('updateNoteBtn').style.display = 'block';
+                document.getElementById('saveNoteBtn').style.display = 'none';
+            }
+        }
+
+        // Save final note to localStorage
+        document.getElementById('saveNoteBtn').addEventListener('click', function () {
+            const header = document.getElementById('noteHeader').value;
+            const sections = [];
+
+            document.querySelectorAll('.note-section').forEach(section => {
+                const title = section.querySelector('.section-title').value;
+                const text = section.querySelector('.section-text').value;
+                sections.push({ title, text });
+            });
+
+            // Retrieve saved notes or initialize empty array
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            savedNotes.push({ header, sections });
+
+            // Save updated notes list and clear the draft
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+            localStorage.removeItem('noteHeaderDraft');
+            localStorage.removeItem('noteSectionsDraft');
+
+            // Redirect to My Notes page
+            window.location.href = "/Notes/MyNotes";
+        });
+
+        // Update existing note
+        document.getElementById('updateNoteBtn').addEventListener('click', function () {
+            const header = document.getElementById('noteHeader').value;
+            const sections = [];
+
+            document.querySelectorAll('.note-section').forEach(section => {
+                const title = section.querySelector('.section-title').value;
+                const text = section.querySelector('.section-text').value;
+                sections.push({ title, text });
+            });
+
+            // Retrieve saved notes
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+
+            // Update the note at the specified index
+            savedNotes[noteIndexToUpdate] = { header, sections };
+
+            // Save the updated notes list
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+            localStorage.removeItem('noteHeaderDraft');
+            localStorage.removeItem('noteSectionsDraft');
+
+            // Redirect to My Notes page
+            window.location.href = "/Notes/MyNotes";
+        });
+
+        // Create a new section
+        function createSection(number, title = '', text = '') {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.classList.add('note-section');
+            sectionDiv.id = `section${number}`;
+            sectionDiv.innerHTML = `
+                                <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
+                                <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
+                            `;
+            return sectionDiv;
+        }
+
+        // Add a new section
         document.getElementById('addSectionBtn').addEventListener('click', function () {
             sectionCount++;
             const noteSections = document.getElementById('noteSections');
-
-            const newSection = document.createElement('div');
-            newSection.classList.add('note-section');
-            newSection.id = `section${sectionCount}`;
-
-            newSection.innerHTML = `
-                        <input type="text" class="section-title" placeholder="Point ${sectionCount}" />
-                        <textarea class="section-text" placeholder="Write your text here..."></textarea>
-                    `;
-
+            const newSection = createSection(sectionCount);
             noteSections.appendChild(newSection);
+
+            saveDraft();
         });
+
+        // Save draft on input changes
+        document.getElementById('noteHeader').addEventListener('input', saveDraft);
+        document.getElementById('noteSections').addEventListener('input', saveDraft);
     </script>
 }
 
-<!-- Styles -->
 <style>
-    /* General Container Styling */
+    /* Same styles as before */
     .new-note-container {
         padding: 20px;
         max-width: 600px;
         margin: 0 auto;
     }
 
-    /* Header Styling */
     .note-header-input {
         width: 100%;
         padding: 10px;
@@ -77,7 +187,6 @@
             opacity: 0.6;
         }
 
-    /* Note Section Styling */
     .note-sections {
         margin-top: 20px;
     }
@@ -110,35 +219,51 @@
         outline: none;
     }
 
-    /* Add Section Button */
     .add-section-btn {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 50px; /* Circle size */
+        width: 50px;
         height: 50px;
-        background-color: #8A64AD; /* Circle color */
+        background-color: #8A64AD;
         border: none;
-        border-radius: 50%; /* Make it circular */
-        color: white; /* Plus icon color */
-        font-size: 1.5rem; /* Icon size */
+        border-radius: 50%;
+        color: white; 
+        font-size: 1.5rem;
         cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optional shadow */
-        transition: transform 0.2s ease; /* Smooth hover effect */
-        position: fixed; /* Make it float */
-        bottom: 20px; /* Position from bottom */
-        right: 20px; /* Position from right */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
     }
 
         .add-section-btn:hover {
-            transform: scale(1.1); /* Enlarge slightly on hover */
+            transform: scale(1.1);
         }
 
         .add-section-btn:active {
-            transform: scale(0.95); /* Shrink slightly on click */
+            transform: scale(0.95);
         }
 
         .add-section-btn i {
-            pointer-events: none; /* Ensure icon doesn't block button clicks */
+            pointer-events: none;
+        }
+
+    .save-note-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #8A64AD;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        .save-note-btn:hover {
+            background-color: #764DA9;
         }
 </style>

@@ -1,28 +1,61 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using YourNamespace.Models;
+using System.Collections.Generic;
 
-namespace YourNamespace.Controllers
+namespace Notadise.Controllers
 {
     public class NotesController : Controller
     {
+        // In-memory storage for notes
+        private static List<Note> Notes = new List<Note>();
+
+        // Render the New Note page
         public IActionResult NewNote()
         {
-            // Example: Fetch or create a new note model
-            var note = new NoteModel
-            {
-                Title = "Sample Note",
-                LastEdited = DateTime.Now,
-                FileSizeKB = 875, // Example size
-                CreationDate = new DateTime(2023, 11, 11),
-                Sections = new List<NoteSection>
-                {
-                    new NoteSection { Id = 1, Title = "Point 1", Content = "Sample content for point 1" },
-                    new NoteSection { Id = 2, Title = "Point 2", Content = "Sample content for point 2" }
-                }
-            };
-
-            // Pass the model to the view
-            return View(note);
+            return View();
         }
+
+        // Render the My Notes page
+        public IActionResult MyNotes()
+        {
+            return View();
+        }
+
+        // API to save a note
+        [HttpPost]
+        public IActionResult SaveNote([FromBody] Note newNote)
+        {
+            if (!string.IsNullOrEmpty(newNote.Title) && !string.IsNullOrEmpty(newNote.Content))
+            {
+                Notes.Add(newNote);
+                return Ok();
+            }
+            return BadRequest("Invalid note data.");
+        }
+
+        // API to fetch all notes
+        [HttpGet]
+        public IActionResult GetNotes()
+        {
+            return Json(Notes);
+        }
+
+        // API to delete a note by index
+        [HttpPost]
+        public IActionResult DeleteNote(int index)
+        {
+            if (index >= 0 && index < Notes.Count)
+            {
+                Notes.RemoveAt(index);
+                return Ok();
+            }
+            return BadRequest("Invalid note index.");
+        }
+    }
+
+    // Note model
+    public class Note
+    {
+        public string Title { get; set; }
+        public string Content { get; set; }
     }
 }
