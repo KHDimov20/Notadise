@@ -2,16 +2,18 @@
     ViewData["Title"] = "New Note";
 }
 
+<head>
+    <!-- Other meta tags and styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+
 <div class="new-note-container">
+    <!-- Header Section -->
     <div class="note-header">
-        <h1>HEADER <i class="fa fa-pencil" aria-hidden="true"></i></h1>
-        <div class="note-details">
-            <span>16:42</span>
-            <span>875KB</span>
-            <span>November 11</span>
-        </div>
+        <input type="text" id="noteHeader" placeholder="HEADER" class="note-header-input" />
     </div>
 
+    <!-- Note Sections -->
     <div class="note-sections" id="noteSections">
         <div class="note-section" id="section1">
             <input type="text" class="section-title" placeholder="Point 1" />
@@ -19,11 +21,13 @@
         </div>
     </div>
 
+    <!-- Circle Button for Adding Sections -->
     <button id="addSectionBtn" class="add-section-btn">
-        <i class="fa fa-plus" aria-hidden="true"></i>
+        <i class="fas fa-plus"></i> <!-- Font Awesome Plus Icon -->
     </button>
 </div>
 
+<!-- Scripts Section -->
 @section Scripts {
     <script>
         // Handle adding new sections
@@ -46,3 +50,95 @@
         });
     </script>
 }
+
+<!-- Styles -->
+<style>
+    /* General Container Styling */
+    .new-note-container {
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Header Styling */
+    .note-header-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.5rem;
+        color: #8A64AD;
+        border: none;
+        border-bottom: 2px solid #8A64AD;
+        outline: none;
+        text-align: center;
+    }
+
+        .note-header-input::placeholder {
+            color: #8A64AD;
+            opacity: 0.6;
+        }
+
+    /* Note Section Styling */
+    .note-sections {
+        margin-top: 20px;
+    }
+
+    .note-section {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .section-title {
+        width: 100%;
+        padding: 8px;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        border: none;
+        border-bottom: 2px solid #8A64AD;
+        outline: none;
+    }
+
+    .section-text {
+        width: 100%;
+        padding: 8px;
+        font-size: 1rem;
+        height: 100px;
+        resize: none;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    /* Add Section Button */
+    .add-section-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px; /* Circle size */
+        height: 50px;
+        background-color: #8A64AD; /* Circle color */
+        border: none;
+        border-radius: 50%; /* Make it circular */
+        color: white; /* Plus icon color */
+        font-size: 1.5rem; /* Icon size */
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optional shadow */
+        transition: transform 0.2s ease; /* Smooth hover effect */
+        position: fixed; /* Make it float */
+        bottom: 20px; /* Position from bottom */
+        right: 20px; /* Position from right */
+    }
+
+        .add-section-btn:hover {
+            transform: scale(1.1); /* Enlarge slightly on hover */
+        }
+
+        .add-section-btn:active {
+            transform: scale(0.95); /* Shrink slightly on click */
+        }
+
+        .add-section-btn i {
+            pointer-events: none; /* Ensure icon doesn't block button clicks */
+        }
+</style>
