@@ -2,7 +2,7 @@
     ViewData["Title"] = "My Notes";
 }
 
-<div class="my-notes-container">
+<div class="my-notes-header">
     <!-- Search Bar -->
     <div class="search-container">
         <div class="search-bar-wrapper">
@@ -11,13 +11,38 @@
         </div>
     </div>
 
+    <!-- Log Out Button -->
+    <button class="logout-btn" onclick="logout()">Log out</button>
+</div>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<div class="my-notes-container">
     <!-- Notes Grid -->
     <div class="notes-grid" id="notesGrid"></div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="deletePrompt" class="delete-modal">
+    <div class="delete-modal-content">
+        <p>Are you sure you want to delete this note?</p>
+        <div class="modal-buttons">
+            <button onclick="confirmDelete()" class="confirm-btn">Yes, delete</button>
+            <button onclick="closeDeletePrompt()" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        // Load saved notes from localStorage
+        // Global reference to the index of the note being deleted
+        let noteToDeleteIndex = null;
+
+        // Function to load saved notes
         function loadNotes() {
             const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
             const notesGrid = document.getElementById('notesGrid');
@@ -28,16 +53,35 @@
                 noteCard.classList.add('note-card');
                 noteCard.setAttribute('data-index', index);
                 noteCard.innerHTML = `
-                        <h3 class="note-title">${note.header}</h3>
-                        <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
-                        <button class="delete-btn" onclick="deleteNote(${index})">Delete</button>
-                    `;
+                            <h3 class="note-title">${note.header}</h3>
+                            <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
+                            <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
+                        `;
                 noteCard.addEventListener('click', (event) => {
-                    // Prevent "editNote" from triggering if the delete button is clicked
                     if (event.target.tagName !== 'BUTTON') editNote(index);
                 });
                 notesGrid.appendChild(noteCard);
             });
+        }
+
+        // Show delete prompt modal
+        function showDeletePrompt(index) {
+            noteToDeleteIndex = index;
+            document.getElementById('deletePrompt').classList.add('show'); // Show the modal
+        }
+
+        // Confirm delete
+        function confirmDelete() {
+            let savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            savedNotes.splice(noteToDeleteIndex, 1); // Remove the note
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes)); // Save updated notes
+            loadNotes(); // Reload the notes grid
+            closeDeletePrompt(); // Close the modal
+        }
+
+        // Close delete prompt modal
+        function closeDeletePrompt() {
+            document.getElementById('deletePrompt').classList.remove('show');
         }
 
         // Edit Note
@@ -46,14 +90,10 @@
             window.location.href = "/Notes/NewNote"; // Redirect to New Note page
         }
 
-        // Delete Note
-        function deleteNote(index) {
-            if (confirm("Are you sure you want to delete this note?")) {
-                let savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-                savedNotes.splice(index, 1); // Remove the note at the specified index
-                localStorage.setItem('savedNotes', JSON.stringify(savedNotes)); // Save updated notes
-                loadNotes(); // Reload the notes grid
-            }
+        // Log Out function
+        function logout() {
+            // Redirect to a logout route or clear user session
+            window.location.href = '/Account/Logout'; // Adjust URL to your logout endpoint
         }
 
         // Search Functionality
@@ -73,33 +113,31 @@
 }
 
 <style>
-    /* Main container */
-    .my-notes-container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-        font-family: Arial, sans-serif;
+    /* Header section styling */
+    .my-notes-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f8f8f8;
+        border-bottom: 1px solid #ddd;
     }
 
     /* Search container styling */
     .search-container {
-        margin-bottom: 20px;
-        text-align: center;
+        display: flex;
+        align-items: center;
     }
 
     .search-bar-wrapper {
         display: flex;
         align-items: center;
-        justify-content: center;
-        width: 80%;
-        max-width: 600px;
-        margin: 0 auto;
         position: relative;
     }
 
     .search-input {
-        width: 100%;
-        padding: 10px 20px 10px 40px; /* Add padding for the icon */
+        width: 300px;
+        padding: 10px 15px 10px 40px; /* Add padding for the icon */
         font-size: 1rem;
         border: 1px solid #ddd;
         border-radius: 25px;
@@ -119,6 +157,30 @@
         color: #8A64AD;
     }
 
+    /* Log Out Button styling */
+    .logout-btn {
+        padding: 8px 12px;
+        font-size: 1rem;
+        color: #8A64AD;
+        background-color: #f8f8f8;
+        border: 1px solid #8A64AD;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .logout-btn:hover {
+            background-color: #8A64AD;
+            color: white;
+        }
+
+    /* Notes container */
+    .my-notes-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
     /* Notes grid styling */
     .notes-grid {
         display: grid;
@@ -127,8 +189,6 @@
         justify-content: center; /* Centers the entire grid in its container */
     }
 
-
-    /* Square note card */
     /* Square note card */
     .note-card {
         background-color: #fff;
@@ -178,22 +238,85 @@
         -webkit-box-orient: vertical;
     }
 
-    /* Delete button styling */
     .delete-btn {
-        margin-top: auto; /* Push the button to the bottom of the card */
-        align-self: center; /* Center-align the button horizontally */
-        padding: 5px 10px;
-        font-size: 0.9rem;
-        background-color: #8A64AD; /* Red color for delete */
-        color: #fff;
+        background-color: #8A64AD;
+        color: white;
         border: none;
+        padding: 5px 10px;
         border-radius: 5px;
+        font-size: 0.8rem;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        margin-top: auto;
     }
 
         .delete-btn:hover {
-            background-color: #764DA9; /* Darker red on hover */
+            background-color: #8A64AD;
         }
 
+    /* Modal styling */
+    .delete-modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .delete-modal.show {
+            display: flex; /* Show modal when 'show' class is added */
+        }
+
+    .delete-modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+    }
+
+        .delete-modal-content p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .confirm-btn {
+        padding: 10px 15px;
+        background-color: #8A64AD; /* Red for confirm */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+        .confirm-btn:hover {
+            background-color: #8A64AD; /* Darker red on hover */
+        }
+
+    .cancel-btn {
+        padding: 10px 15px;
+        background-color: #ddd; /* Gray for cancel */
+        color: black;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+        .cancel-btn:hover {
+            background-color: #bbb; /* Darker gray on hover */
+        }
 </style>

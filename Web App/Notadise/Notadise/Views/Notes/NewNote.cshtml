@@ -12,9 +12,7 @@
     <div class="note-sections" id="noteSections"></div>
 
     <!-- Add Section Button -->
-    <button id="addSectionBtn" class="add-section-btn">
-        <i class="fas fa-plus"></i>
-    </button>
+    <button id="addSectionBtn" class="add-section-btn">+</button>
 
     <!-- Save Button -->
     <button id="saveNoteBtn" class="save-note-btn">Save</button>
@@ -89,9 +87,9 @@
             sectionDiv.classList.add('note-section');
             sectionDiv.id = `section${number}`;
             sectionDiv.innerHTML = `
-                                <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
-                                <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
-                            `;
+                                        <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
+                                        <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
+                                    `;
             return sectionDiv;
         }
 
@@ -106,7 +104,6 @@
 }
 
 <style>
-    /* Same styles as before */
     .new-note-container {
         padding: 20px;
         max-width: 600px;
@@ -165,13 +162,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         background-color: #8A64AD;
         border: none;
         border-radius: 50%;
         color: white;
-        font-size: 1.5rem;
+        font-size: 65px;
         cursor: pointer;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease;
@@ -182,6 +179,7 @@
 
         .add-section-btn:hover {
             transform: scale(1.1);
+            background-color: #764DA9;
         }
 
         .add-section-btn:active {
