@@ -18,72 +18,37 @@
 
     <!-- Save Button -->
     <button id="saveNoteBtn" class="save-note-btn">Save</button>
-
-    <!-- Update Button (Initially hidden) -->
-    <button id="updateNoteBtn" class="save-note-btn" style="display: none;">Update</button>
 </div>
 
 @section Scripts {
     <script>
         let sectionCount = 0;
-        let noteIndexToUpdate = null; // Keeps track of the note being updated
 
-        // Load saved draft on page load
+        // Load the page
         window.addEventListener('DOMContentLoaded', function () {
-            const savedHeader = localStorage.getItem('noteHeaderDraft');
-            const savedSections = JSON.parse(localStorage.getItem('noteSectionsDraft'));
-
-            if (savedHeader) document.getElementById('noteHeader').value = savedHeader;
-            if (savedSections) {
-                sectionCount = savedSections.length;
-                const noteSections = document.getElementById('noteSections');
-                savedSections.forEach((section, index) => {
-                    const newSection = createSection(index + 1, section.title, section.text);
-                    noteSections.appendChild(newSection);
-                });
-            }
-
-            // Check if we're updating an existing note
             const editNoteIndex = localStorage.getItem('editNoteIndex');
-            if (editNoteIndex !== null) {
-                noteIndexToUpdate = editNoteIndex;
-                loadNoteForEditing(noteIndexToUpdate);
+
+            if (editNoteIndex) {
+                // If editing, load the selected note
+                const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+                const noteToEdit = savedNotes[editNoteIndex];
+
+                if (noteToEdit) {
+                    // Populate the note form with data
+                    document.getElementById('noteHeader').value = noteToEdit.header;
+                    sectionCount = noteToEdit.sections.length;
+                    const noteSections = document.getElementById('noteSections');
+                    noteToEdit.sections.forEach((section, index) => {
+                        const newSection = createSection(index + 1, section.title, section.text);
+                        noteSections.appendChild(newSection);
+                    });
+                }
+            } else {
+                // Clear draft data for a new note
+                localStorage.removeItem('noteHeaderDraft');
+                localStorage.removeItem('noteSectionsDraft');
             }
         });
-
-        // Save draft to localStorage
-        function saveDraft() {
-            const header = document.getElementById('noteHeader').value;
-            const sections = [];
-
-            document.querySelectorAll('.note-section').forEach(section => {
-                const title = section.querySelector('.section-title').value;
-                const text = section.querySelector('.section-text').value;
-                sections.push({ title, text });
-            });
-
-            localStorage.setItem('noteHeaderDraft', header);
-            localStorage.setItem('noteSectionsDraft', JSON.stringify(sections));
-        }
-
-        // Load note data for editing
-        function loadNoteForEditing(index) {
-            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            const note = savedNotes[index];
-
-            if (note) {
-                document.getElementById('noteHeader').value = note.header;
-                const noteSections = document.getElementById('noteSections');
-                note.sections.forEach((section, i) => {
-                    const newSection = createSection(i + 1, section.title, section.text);
-                    noteSections.appendChild(newSection);
-                });
-
-                // Show update button and hide save button
-                document.getElementById('updateNoteBtn').style.display = 'block';
-                document.getElementById('saveNoteBtn').style.display = 'none';
-            }
-        }
 
         // Save final note to localStorage
         document.getElementById('saveNoteBtn').addEventListener('click', function () {
@@ -98,35 +63,18 @@
 
             // Retrieve saved notes or initialize empty array
             const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            savedNotes.push({ header, sections });
+            const editNoteIndex = localStorage.getItem('editNoteIndex');
 
-            // Save updated notes list and clear the draft
-            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
-            localStorage.removeItem('noteHeaderDraft');
-            localStorage.removeItem('noteSectionsDraft');
+            if (editNoteIndex) {
+                // If editing, update the specific note
+                savedNotes[editNoteIndex] = { header, sections };
+                localStorage.removeItem('editNoteIndex'); // Clear the edit index after saving
+            } else {
+                // If creating a new note, add it to the list
+                savedNotes.push({ header, sections });
+            }
 
-            // Redirect to My Notes page
-            window.location.href = "/Notes/MyNotes";
-        });
-
-        // Update existing note
-        document.getElementById('updateNoteBtn').addEventListener('click', function () {
-            const header = document.getElementById('noteHeader').value;
-            const sections = [];
-
-            document.querySelectorAll('.note-section').forEach(section => {
-                const title = section.querySelector('.section-title').value;
-                const text = section.querySelector('.section-text').value;
-                sections.push({ title, text });
-            });
-
-            // Retrieve saved notes
-            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-
-            // Update the note at the specified index
-            savedNotes[noteIndexToUpdate] = { header, sections };
-
-            // Save the updated notes list
+            // Save updated notes list
             localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
             localStorage.removeItem('noteHeaderDraft');
             localStorage.removeItem('noteSectionsDraft');
@@ -153,13 +101,7 @@
             const noteSections = document.getElementById('noteSections');
             const newSection = createSection(sectionCount);
             noteSections.appendChild(newSection);
-
-            saveDraft();
         });
-
-        // Save draft on input changes
-        document.getElementById('noteHeader').addEventListener('input', saveDraft);
-        document.getElementById('noteSections').addEventListener('input', saveDraft);
     </script>
 }
 
@@ -228,7 +170,7 @@
         background-color: #8A64AD;
         border: none;
         border-radius: 50%;
-        color: white; 
+        color: white;
         font-size: 1.5rem;
         cursor: pointer;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
