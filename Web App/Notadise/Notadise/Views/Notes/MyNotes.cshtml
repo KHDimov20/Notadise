@@ -53,10 +53,10 @@
                 noteCard.classList.add('note-card');
                 noteCard.setAttribute('data-index', index);
                 noteCard.innerHTML = `
-                            <h3 class="note-title">${note.header}</h3>
-                            <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
-                            <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
-                        `;
+                                    <h3 class="note-title">${note.header}</h3>
+                                    <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
+                                    <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
+                                `;
                 noteCard.addEventListener('click', (event) => {
                     if (event.target.tagName !== 'BUTTON') editNote(index);
                 });
@@ -93,7 +93,7 @@
         // Log Out function
         function logout() {
             // Redirect to a logout route or clear user session
-            window.location.href = '/Account/Logout'; // Adjust URL to your logout endpoint
+            window.location.href = '/Identity/Account/Register'; // Adjust URL to your logout endpoint
         }
 
         // Search Functionality
