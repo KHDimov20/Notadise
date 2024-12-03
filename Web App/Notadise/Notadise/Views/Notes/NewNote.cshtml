@@ -8,6 +8,25 @@
         <input type="text" id="noteHeader" placeholder="HEADER" class="note-header-input" />
     </div>
 
+    <!-- Add a dropdown for selecting the category -->
+    <div class="note-category">
+        <label for="noteCategory">Category:</label>
+        <select id="noteCategory" class="note-category-select">
+            <option value="school">School</option>
+            <option value="university">University</option>
+            <option value="work">Work</option>
+            <option value="art-projects">Art Projects</option>
+        </select>
+        <!-- Button to add a new category -->
+        <button id="addCategoryBtn" class="add-category-btn">+ Add Category</button>
+    </div>
+
+    <!-- Input field to add new category (hidden initially) -->
+    <div class="new-category-input" style="display: none;">
+        <input type="text" id="newCategoryName" class="new-category-name" placeholder="Enter new category name" />
+        <button id="saveNewCategoryBtn" class="save-new-category-btn">Save</button>
+    </div>
+
     <!-- Note Sections -->
     <div class="note-sections" id="noteSections"></div>
 
@@ -34,6 +53,7 @@
                 if (noteToEdit) {
                     // Populate the note form with data
                     document.getElementById('noteHeader').value = noteToEdit.header;
+                    document.getElementById('noteCategory').value = noteToEdit.category; // Load the category
                     sectionCount = noteToEdit.sections.length;
                     const noteSections = document.getElementById('noteSections');
                     noteToEdit.sections.forEach((section, index) => {
@@ -51,6 +71,7 @@
         // Save final note to localStorage
         document.getElementById('saveNoteBtn').addEventListener('click', function () {
             const header = document.getElementById('noteHeader').value;
+            const category = document.getElementById('noteCategory').value; // Get the selected category
             const sections = [];
 
             document.querySelectorAll('.note-section').forEach(section => {
@@ -65,11 +86,11 @@
 
             if (editNoteIndex) {
                 // If editing, update the specific note
-                savedNotes[editNoteIndex] = { header, sections };
+                savedNotes[editNoteIndex] = { header, category, sections };  // Include category here
                 localStorage.removeItem('editNoteIndex'); // Clear the edit index after saving
             } else {
                 // If creating a new note, add it to the list
-                savedNotes.push({ header, sections });
+                savedNotes.push({ header, category, sections });  // Include category here
             }
 
             // Save updated notes list
@@ -87,9 +108,9 @@
             sectionDiv.classList.add('note-section');
             sectionDiv.id = `section${number}`;
             sectionDiv.innerHTML = `
-                                        <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
-                                        <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
-                                    `;
+                                                <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
+                                                <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
+                                            `;
             return sectionDiv;
         }
 
@@ -99,6 +120,28 @@
             const noteSections = document.getElementById('noteSections');
             const newSection = createSection(sectionCount);
             noteSections.appendChild(newSection);
+        });
+
+        // Show input field to add a new category
+        document.getElementById('addCategoryBtn').addEventListener('click', function () {
+            document.querySelector('.new-category-input').style.display = 'block';
+        });
+
+        // Save the new category
+        document.getElementById('saveNewCategoryBtn').addEventListener('click', function () {
+            const newCategory = document.getElementById('newCategoryName').value.trim();
+
+            if (newCategory) {
+                const categorySelect = document.getElementById('noteCategory');
+                const newOption = document.createElement('option');
+                newOption.value = newCategory.toLowerCase().replace(/\s+/g, '-'); // Convert to a valid value
+                newOption.textContent = newCategory;
+                categorySelect.appendChild(newOption);
+                document.getElementById('newCategoryName').value = ''; // Clear the input
+                document.querySelector('.new-category-input').style.display = 'none'; // Hide input field
+            } else {
+                alert('Please enter a valid category name.');
+            }
         });
     </script>
 }
@@ -125,6 +168,56 @@
             color: #8A64AD;
             opacity: 0.6;
         }
+
+    .note-category {
+        margin-top: 20px;
+    }
+
+    .note-category-select {
+        width: 100%;
+        padding: 8px;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .add-category-btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #8A64AD;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .new-category-input {
+        margin-top: 10px;
+    }
+
+    .new-category-name {
+        width: 100%;
+        padding: 8px;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .save-new-category-btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #8A64AD;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
 
     .note-sections {
         margin-top: 20px;
