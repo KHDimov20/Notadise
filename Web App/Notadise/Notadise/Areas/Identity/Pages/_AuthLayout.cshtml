@@ -2,48 +2,89 @@
     Layout = "/Views/Shared/_MinimalLayout.cshtml";
 }
 
-
-<div class="row justify-content-center">
-    <div class="col-5 mt-5">
-        <div class="card login-logout-card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Identity/Account/Login">
-                            Log In
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Identity/Account/Register">
-                            Register
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="card-body">
-                <div class="row justify-content-center">
-                    <div class="col-10 my-4">
-                        @RenderBody();
-                    </div>
-                </div>
-            </div>
+<div class="auth-layout">
+    <div class="auth-container">
+        <div class="auth-tabs">
+            <ul class="nav nav-tabs justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link @((ViewData["Title"] as string) == "Log in" ? "active" : "")" href="/Identity/Account/Login">
+                        Log In
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @((ViewData["Title"] as string) == "Register" ? "active" : "")" href="/Identity/Account/Register">
+                        Register
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="auth-content">
+            @RenderBody()
         </div>
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-        $(function () { 
-            const currentPage = location.pathname;
-            $('.nav-tabs li a').each(function () {
-                const $this = $(this);
-                if (currentPage.toLocaleLowerCase().indexOf($this.attr('href').toLocaleLowerCase()) != -1)
-                {
-                    $this.addClass('active');
+        $(function () {
+            const currentPage = location.pathname.toLowerCase();
+            $('.nav-tabs .nav-link').each(function () {
+                const link = $(this).attr('href').toLowerCase();
+                if (currentPage.includes(link)) {
+                    $(this).addClass('active');
                 }
-            })
-        })
+            });
+        });
     </script>
-};
+}
+
+<style>
+    /* Layout Styles */
+    .auth-layout {
+        min-height: 100vh;
+        background: linear-gradient(to right, #8A64AD, #7F92C3);
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .auth-container {
+        width: 100%;
+        max-width: 450px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .auth-tabs {
+        background-color: #f8f9fa;
+        padding: 15px 0;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 10px;
+    }
+
+    .nav-tabs .nav-link {
+        color: #A27FC3;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 0;
+        border-radius: 10px;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            background-color: #8A64AD;
+            border-radius: 10px;
+        }
+
+    /* Content Wrapper */
+    .auth-content {
+        padding: 30px;
+    }
+</style>
