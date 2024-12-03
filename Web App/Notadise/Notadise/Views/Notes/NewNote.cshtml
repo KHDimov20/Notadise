@@ -8,19 +8,25 @@
         <input type="text" id="noteHeader" placeholder="HEADER" class="note-header-input" />
     </div>
 
-    <!-- Add a dropdown for selecting the category -->
+    <!-- Custom Category Dropdown -->
     <div class="note-category">
         <label for="noteCategory">Category:</label>
-        <select id="noteCategory" class="note-category-select">
-            <option value="school">School</option>
-            <option value="university">University</option>
-            <option value="work">Work</option>
-            <option value="art-projects">Art Projects</option>
-        </select>
+        <div class="custom-select">
+            <select id="noteCategory" class="note-category-select">
+                <option value="school">School</option>
+                <option value="university">University</option>
+                <option value="work">Work</option>
+                <option value="art-projects">Art Projects</option>
+            </select>
+        </div>
+
+        <br />
         <!-- Button to add a new category -->
         <button id="addCategoryBtn" class="add-category-btn">+ Add Category</button>
     </div>
 
+    <br />
+    <br />
     <!-- Input field to add new category (hidden initially) -->
     <div class="new-category-input" style="display: none;">
         <input type="text" id="newCategoryName" class="new-category-name" placeholder="Enter new category name" />
@@ -108,9 +114,9 @@
             sectionDiv.classList.add('note-section');
             sectionDiv.id = `section${number}`;
             sectionDiv.innerHTML = `
-                                                <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
-                                                <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
-                                            `;
+                                        <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
+                                        <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
+                                    `;
             return sectionDiv;
         }
 
@@ -164,22 +170,50 @@
         text-align: center;
     }
 
-        .note-header-input::placeholder {
-            color: #8A64AD;
-            opacity: 0.6;
-        }
+    .note-header-input::placeholder {
+        color: #8A64AD;
+        opacity: 0.6;
+    }
 
     .note-category {
         margin-top: 20px;
     }
 
+    /* Custom select styling */
+    .custom-select {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
     .note-category-select {
         width: 100%;
-        padding: 8px;
+        padding: 8px 15px;
         font-size: 1rem;
-        border: 1px solid #ddd;
+        border: none;
         border-radius: 5px;
         outline: none;
+        background-color: #fff;
+        color: #8A64AD;
+        appearance: none; /* Removes default dropdown arrow */
+        cursor: pointer;
+    }
+
+    /* Add custom arrow */
+    .note-category-select::-ms-expand {
+        display: none;
+    }
+
+    .note-category-select:focus {
+        border-color: #8A64AD;
+        box-shadow: 0 0 5px rgba(138, 100, 173, 0.5);
+    }
+
+    .note-category-select option {
+        color: #333;
     }
 
     .add-category-btn {
@@ -192,6 +226,38 @@
         cursor: pointer;
         border: none;
         border-radius: 5px;
+    }
+
+    .add-section-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+        height: 60px;
+        background-color: #8A64AD;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 65px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .add-section-btn:hover {
+        transform: scale(1.1);
+        background-color: #764DA9;
+    }
+
+    .add-section-btn:active {
+        transform: scale(0.95);
+    }
+
+    .add-section-btn i {
+        pointer-events: none;
     }
 
     .new-category-input {
@@ -219,69 +285,9 @@
         border-radius: 5px;
     }
 
-    .note-sections {
-        margin-top: 20px;
+    .save-new-category-btn:hover {
+        background-color: #764DA9;
     }
-
-    .note-section {
-        margin-bottom: 20px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .section-title {
-        width: 100%;
-        padding: 8px;
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        border: none;
-        border-bottom: 2px solid #8A64AD;
-        outline: none;
-    }
-
-    .section-text {
-        width: 100%;
-        padding: 8px;
-        font-size: 1rem;
-        height: 100px;
-        resize: none;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        outline: none;
-    }
-
-    .add-section-btn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 60px;
-        height: 60px;
-        background-color: #8A64AD;
-        border: none;
-        border-radius: 50%;
-        color: white;
-        font-size: 65px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-    }
-
-        .add-section-btn:hover {
-            transform: scale(1.1);
-            background-color: #764DA9;
-        }
-
-        .add-section-btn:active {
-            transform: scale(0.95);
-        }
-
-        .add-section-btn i {
-            pointer-events: none;
-        }
 
     .save-note-btn {
         display: block;
@@ -296,7 +302,7 @@
         transition: background-color 0.2s ease;
     }
 
-        .save-note-btn:hover {
-            background-color: #764DA9;
-        }
+    .save-note-btn:hover {
+        background-color: #764DA9;
+    }
 </style>
