@@ -13,25 +13,24 @@
         <label for="noteCategory">Category:</label>
         <div class="custom-select">
             <select id="noteCategory" class="note-category-select">
-                <option value="school">School</option>
-                <option value="university">University</option>
-                <option value="work">Work</option>
-                <option value="art-projects">Art Projects</option>
+                <!-- Default categories will be populated dynamically -->
             </select>
         </div>
-
         <br />
+        <br />
+       
         <!-- Button to add a new category -->
         <button id="addCategoryBtn" class="add-category-btn">+ Add Category</button>
     </div>
+    <br />
 
-    <br />
-    <br />
     <!-- Input field to add new category (hidden initially) -->
     <div class="new-category-input" style="display: none;">
         <input type="text" id="newCategoryName" class="new-category-name" placeholder="Enter new category name" />
         <button id="saveNewCategoryBtn" class="save-new-category-btn">Save</button>
     </div>
+    <br />
+    <br />
 
     <!-- Note Sections -->
     <div class="note-sections" id="noteSections"></div>
@@ -47,21 +46,26 @@
     <script>
         let sectionCount = 0;
 
+        // Default categories
+        const defaultCategories = ["School", "University", "Work", "Art Projects"];
+
         // Load the page
-        window.addEventListener('DOMContentLoaded', function () {
-            const editNoteIndex = localStorage.getItem('editNoteIndex');
+        window.addEventListener("DOMContentLoaded", function () {
+            loadCategories(); // Load categories from localStorage or defaults
+
+            const editNoteIndex = localStorage.getItem("editNoteIndex");
 
             if (editNoteIndex) {
                 // If editing, load the selected note
-                const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+                const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
                 const noteToEdit = savedNotes[editNoteIndex];
 
                 if (noteToEdit) {
                     // Populate the note form with data
-                    document.getElementById('noteHeader').value = noteToEdit.header;
-                    document.getElementById('noteCategory').value = noteToEdit.category; // Load the category
+                    document.getElementById("noteHeader").value = noteToEdit.header;
+                    document.getElementById("noteCategory").value = noteToEdit.category; // Load the category
                     sectionCount = noteToEdit.sections.length;
-                    const noteSections = document.getElementById('noteSections');
+                    const noteSections = document.getElementById("noteSections");
                     noteToEdit.sections.forEach((section, index) => {
                         const newSection = createSection(index + 1, section.title, section.text);
                         noteSections.appendChild(newSection);
@@ -69,90 +73,168 @@
                 }
             } else {
                 // Clear draft data for a new note
-                localStorage.removeItem('noteHeaderDraft');
-                localStorage.removeItem('noteSectionsDraft');
+                localStorage.removeItem("noteHeaderDraft");
+                localStorage.removeItem("noteSectionsDraft");
             }
         });
 
         // Save final note to localStorage
-        document.getElementById('saveNoteBtn').addEventListener('click', function () {
-            const header = document.getElementById('noteHeader').value;
-            const category = document.getElementById('noteCategory').value; // Get the selected category
+        document.getElementById("saveNoteBtn").addEventListener("click", function () {
+            const header = document.getElementById("noteHeader").value;
+            const category = document.getElementById("noteCategory").value; // Get the selected category
             const sections = [];
 
-            document.querySelectorAll('.note-section').forEach(section => {
-                const title = section.querySelector('.section-title').value;
-                const text = section.querySelector('.section-text').value;
+            document.querySelectorAll(".note-section").forEach((section) => {
+                const title = section.querySelector(".section-title").value;
+                const text = section.querySelector(".section-text").value;
                 sections.push({ title, text });
             });
 
             // Retrieve saved notes or initialize empty array
-            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            const editNoteIndex = localStorage.getItem('editNoteIndex');
+            const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
+            const editNoteIndex = localStorage.getItem("editNoteIndex");
 
             if (editNoteIndex) {
                 // If editing, update the specific note
-                savedNotes[editNoteIndex] = { header, category, sections };  // Include category here
-                localStorage.removeItem('editNoteIndex'); // Clear the edit index after saving
+                savedNotes[editNoteIndex] = { header, category, sections }; // Include category here
+                localStorage.removeItem("editNoteIndex"); // Clear the edit index after saving
             } else {
                 // If creating a new note, add it to the list
-                savedNotes.push({ header, category, sections });  // Include category here
+                savedNotes.push({ header, category, sections }); // Include category here
             }
 
             // Save updated notes list
-            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
-            localStorage.removeItem('noteHeaderDraft');
-            localStorage.removeItem('noteSectionsDraft');
+            localStorage.setItem("savedNotes", JSON.stringify(savedNotes));
+            localStorage.removeItem("noteHeaderDraft");
+            localStorage.removeItem("noteSectionsDraft");
 
             // Redirect to My Notes page
             window.location.href = "/Notes/MyNotes";
         });
 
         // Create a new section
-        function createSection(number, title = '', text = '') {
-            const sectionDiv = document.createElement('div');
-            sectionDiv.classList.add('note-section');
+        function createSection(number, title = "", text = "") {
+            const sectionDiv = document.createElement("div");
+            sectionDiv.classList.add("note-section");
             sectionDiv.id = `section${number}`;
             sectionDiv.innerHTML = `
-                                        <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
-                                        <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
-                                    `;
+                                                <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
+                                                <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
+                                            `;
             return sectionDiv;
         }
 
         // Add a new section
-        document.getElementById('addSectionBtn').addEventListener('click', function () {
+        document.getElementById("addSectionBtn").addEventListener("click", function () {
             sectionCount++;
-            const noteSections = document.getElementById('noteSections');
+            const noteSections = document.getElementById("noteSections");
             const newSection = createSection(sectionCount);
             noteSections.appendChild(newSection);
         });
 
         // Show input field to add a new category
-        document.getElementById('addCategoryBtn').addEventListener('click', function () {
-            document.querySelector('.new-category-input').style.display = 'block';
+        document.getElementById("addCategoryBtn").addEventListener("click", function () {
+            document.querySelector(".new-category-input").style.display = "block";
         });
 
         // Save the new category
-        document.getElementById('saveNewCategoryBtn').addEventListener('click', function () {
-            const newCategory = document.getElementById('newCategoryName').value.trim();
+        document.getElementById("saveNewCategoryBtn").addEventListener("click", function () {
+            const newCategory = document.getElementById("newCategoryName").value.trim();
 
             if (newCategory) {
-                const categorySelect = document.getElementById('noteCategory');
-                const newOption = document.createElement('option');
-                newOption.value = newCategory.toLowerCase().replace(/\s+/g, '-'); // Convert to a valid value
-                newOption.textContent = newCategory;
-                categorySelect.appendChild(newOption);
-                document.getElementById('newCategoryName').value = ''; // Clear the input
-                document.querySelector('.new-category-input').style.display = 'none'; // Hide input field
+                const categories = loadCategoriesFromLocalStorage();
+                if (!categories.includes(newCategory)) {
+                    categories.push(newCategory); // Add new category
+                    saveCategoriesToLocalStorage(categories); // Save updated categories
+                    populateCategoriesDropdown(categories); // Refresh dropdown
+                }
+                document.getElementById("newCategoryName").value = ""; // Clear the input
+                document.querySelector(".new-category-input").style.display = "none"; // Hide input field
             } else {
-                alert('Please enter a valid category name.');
+                alert("Please enter a valid category name.");
             }
         });
+
+        // Load categories from localStorage or use defaults
+        function loadCategories() {
+            const categories = loadCategoriesFromLocalStorage();
+            if (categories.length === 0) {
+                saveCategoriesToLocalStorage(defaultCategories); // Save defaults if localStorage is empty
+                populateCategoriesDropdown(defaultCategories);
+            } else {
+                populateCategoriesDropdown(categories);
+            }
+        }
+
+        // Load categories from localStorage
+        function loadCategoriesFromLocalStorage() {
+            return JSON.parse(localStorage.getItem("categories")) || [];
+        }
+
+        // Save categories to localStorage
+        function saveCategoriesToLocalStorage(categories) {
+            localStorage.setItem("categories", JSON.stringify(categories));
+        }
+
+        // Populate the categories dropdown
+        function populateCategoriesDropdown(categories) {
+            const categorySelect = document.getElementById("noteCategory");
+            categorySelect.innerHTML = ""; // Clear existing options
+            categories.forEach((category) => {
+                const option = document.createElement("option");
+                option.value = category.toLowerCase().replace(/\s+/g, "-"); // Convert to a valid value
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
     </script>
 }
 
 <style>
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-toggle {
+        background-color: #8A64AD;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        border-radius: 5px;
+        z-index: 1000;
+    }
+
+    .dropdown-item {
+        padding: 10px;
+        color: white;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            opacity: 0.8;
+        }
+
+    .custom-dropdown:hover .dropdown-menu {
+        display: block;
+    }
     .new-note-container {
         padding: 20px;
         max-width: 600px;

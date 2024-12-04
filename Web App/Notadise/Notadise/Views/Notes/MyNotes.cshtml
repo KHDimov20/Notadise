@@ -3,38 +3,35 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="my-notes-header">
-    <!-- Search Bar -->
-    <div class="search-container">
-        <div class="search-bar-wrapper">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchBar" class="search-input" placeholder="Search notes..." />
+<div class="main-container">
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Header Section -->
+        <div class="header">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="searchBar" class="search-input" placeholder="Search notes..." />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <!-- Logout Button -->
+            <button class="logout-btn" onclick="logout()">Log out</button>
         </div>
-    </div>
 
-    <!-- Log Out Button -->
-    <button class="logout-btn" onclick="logout()">Log out</button>
-</div>
-
-<br />
-<br />
-<br />
-<br />
-<br />
-
-<div class="my-notes-container">
-    <!-- Notes Grid -->
-    <div class="notes-grid" id="notesGrid"></div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="deletePrompt" class="delete-modal">
-    <div class="delete-modal-content">
-        <p>Are you sure you want to delete this note?</p>
-        <div class="modal-buttons">
-            <button onclick="confirmDelete()" class="confirm-btn">Yes, delete</button>
-            <button onclick="closeDeletePrompt()" class="cancel-btn">Cancel</button>
-        </div>
+        <!-- Recent Notes -->
+        <section class="recent-notes">
+            <h1>Most Recent:</h1>
+            <div class="filter-bar">
+                <span class="filter-label">Filter:</span>
+                <span class="filter-item">School</span>
+                <span class="filter-item">Work</span>
+                <span class="filter-item">University</span>
+                <span class="filter-item">Art Projects</span>
+            </div>
+            <div class="notes-grid" id="notesGrid">
+                <!-- Note cards will be dynamically populated -->
+            </div>
+        </section>
     </div>
 </div>
 
@@ -114,23 +111,69 @@
 }
 
 <style>
-    /* Header section styling */
-    .my-notes-header {
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        display: flex;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    .main-container {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 240px;
+        background-color: #8A64AD;
+        color: #fff;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bookmarks {
+        list-style: none;
+        margin-top: 20px;
+    }
+
+    .bookmark-link {
+        text-decoration: none;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 8px;
+        display: block;
+        margin-bottom: 10px;
+        background-color: #9d79bd;
+    }
+
+        .bookmark-link:hover {
+            background-color: #b494d5;
+        }
+
+    /* Main Content */
+    .content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 20px;
-        background-color: #f8f8f8;
-        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
     }
 
-    /* Search container styling */
-    .search-container {
-        display: flex;
-        align-items: center;
-    }
-
-    .search-bar-wrapper {
+    .search-bar {
         display: flex;
         align-items: center;
         position: relative;
@@ -138,106 +181,93 @@
 
     .search-input {
         width: 300px;
-        padding: 10px 15px 10px 40px; /* Add padding for the icon */
-        font-size: 1rem;
-        border: 1px solid #ddd;
+        padding: 10px 15px;
         border-radius: 25px;
-        outline: none;
-        transition: box-shadow 0.2s ease;
+        border: 1px solid #ddd;
     }
-
-        .search-input:focus {
-            box-shadow: 0 0 10px rgba(138, 100, 173, 0.5);
-            border-color: #8A64AD;
-        }
 
     .search-icon {
         position: absolute;
-        left: 15px;
-        font-size: 1.2rem;
+        right: 15px;
+        font-size: 1rem;
         color: #8A64AD;
     }
 
-    /* Log Out Button styling */
     .logout-btn {
-        padding: 8px 12px;
-        font-size: 1rem;
-        color: #8A64AD;
-        background-color: #f8f8f8;
-        border: 1px solid #8A64AD;
+        background-color: #8A64AD;
+        color: white;
+        border: none;
+        padding: 10px 15px;
         border-radius: 5px;
         cursor: pointer;
-        transition: all 0.2s;
     }
 
         .logout-btn:hover {
-            background-color: #8A64AD;
-            color: white;
+            background-color: #6b4c8e;
         }
 
-    /* Notes container */
-    .my-notes-container {
+    /* Recent Notes Section */
+    .recent-notes {
+        background-color: #fff;
         padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    /* Notes grid styling */
+        .recent-notes h1 {
+            font-size: 1.5rem;
+            color: #8A64AD;
+        }
+
+    .filter-bar {
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-label {
+        font-weight: bold;
+    }
+
+    .filter-item {
+        background-color: #e5d8f2;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+        .filter-item:hover {
+            background-color: #d1bee6;
+        }
+
+    /* Notes Grid */
     .notes-grid {
         display: grid;
-        grid-template-columns: repeat(4, 200px); /* Fixed width for cards */
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
-        justify-content: center; /* Centers the entire grid in its container */
     }
 
-    /* Square note card */
     .note-card {
-        background-color: #fff;
+        background-color: #fdfdfd;
         border: 1px solid #ddd;
-        border-radius: 10px;
-        width: 200px;
-        height: 200px;
         padding: 15px;
+        border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column; /* Align content vertically */
-        justify-content: flex-start; /* Align content to the top */
-        align-items: center; /* Center-align text horizontally */
-        gap: 10px; /* Space between the title and the text */
-        overflow: hidden;
-        text-align: center; /* Center-align text inside */
+        height: 250px;
+        width: 250px;
     }
 
-        /* Hover effect */
-        .note-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        .note-card h3 {
+            font-size: 1rem;
+            color: #8A64AD;
         }
 
-    /* Note card content */
-    .note-title {
-        font-size: 1rem;
-        color: #8A64AD;
-        font-weight: bold;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        margin: 0;
-    }
-
-    .note-text {
-        font-size: 0.9rem;
-        color: #666;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: normal; /* Allow text to wrap to a new row */
-        margin: 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* Show up to 2 lines of text */
-        -webkit-box-orient: vertical;
-    }
+        .note-card p {
+            font-size: 0.85rem;
+            color: #555;
+        }
 
     .delete-btn {
         background-color: #8A64AD;
@@ -247,7 +277,7 @@
         border-radius: 5px;
         font-size: 0.8rem;
         cursor: pointer;
-        margin-top: auto;
+        margin-top: a;
     }
 
         .delete-btn:hover {
