@@ -53,28 +53,30 @@
         window.addEventListener("DOMContentLoaded", function () {
             loadCategories(); // Load categories from localStorage or defaults
 
-            const editNoteIndex = localStorage.getItem("editNoteIndex");
+            // Retrieve the note data from localStorage
+            const noteToEdit = JSON.parse(localStorage.getItem('editNote'));
 
-            if (editNoteIndex) {
-                // If editing, load the selected note
-                const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
-                const noteToEdit = savedNotes[editNoteIndex];
+            if (noteToEdit) {
+                // Populate the note form with data from the noteToEdit object
+                document.getElementById("noteHeader").value = noteToEdit.header || ''; // Set header
 
-                if (noteToEdit) {
-                    // Populate the note form with data
-                    document.getElementById("noteHeader").value = noteToEdit.header;
-                    document.getElementById("noteCategory").value = noteToEdit.category; // Load the category
-                    sectionCount = noteToEdit.sections.length;
-                    const noteSections = document.getElementById("noteSections");
-                    noteToEdit.sections.forEach((section, index) => {
-                        const newSection = createSection(index + 1, section.title, section.text);
-                        noteSections.appendChild(newSection);
-                    });
-                }
+                // Set the category dropdown to the current note's category
+                const categorySelect = document.getElementById("noteCategory");
+                const noteCategory = noteToEdit.category || ''; // Get category from note data
+                categorySelect.value = noteCategory.toLowerCase().replace(/\s+/g, "-"); // Normalize category name
+
+                // Populate the sections dynamically
+                sectionCount = noteToEdit.sections.length;
+                const noteSections = document.getElementById("noteSections");
+                noteToEdit.sections.forEach((section, index) => {
+                    const newSection = createSection(index + 1, section.title, section.text);
+                    noteSections.appendChild(newSection);
+                });
             } else {
                 // Clear draft data for a new note
-                localStorage.removeItem("noteHeaderDraft");
-                localStorage.removeItem("noteSectionsDraft");
+                document.getElementById("noteHeader").value = ''; // Default blank header
+                document.getElementById("noteCategory").value = defaultCategories[0].toLowerCase().replace(/\s+/g, "-"); // Default category
+                sectionCount = 0;
             }
         });
 
@@ -84,6 +86,7 @@
             const category = document.getElementById("noteCategory").value; // Get the selected category
             const sections = [];
 
+            // Collect all sections from the form
             document.querySelectorAll(".note-section").forEach((section) => {
                 const title = section.querySelector(".section-title").value;
                 const text = section.querySelector(".section-text").value;
@@ -111,6 +114,7 @@
             // Redirect to My Notes page
             window.location.href = "/Notes/MyNotes";
         });
+
 
         // Create a new section
         function createSection(number, title = "", text = "") {
