@@ -26,6 +26,7 @@
                 <span class="filter-item">Work</span>
                 <span class="filter-item">University</span>
                 <span class="filter-item">Art Projects</span>
+                <span class="filter-item">Custom categories</span>
             </div>
             <br />
             <div class="notes-grid" id="notesGrid">
@@ -109,9 +110,17 @@
 
         // Edit Note
         function editNote(index) {
-            localStorage.setItem('editNoteIndex', index); // Save index of the note to edit
-            window.location.href = "/Notes/NewNote"; // Redirect to New Note page
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            const noteToEdit = savedNotes[index];
+
+            if (noteToEdit) {
+                // Redirect with the note's unique ID
+                window.location.href = `/Notes/NewNote?id=${noteToEdit.id}`;
+            } else {
+                alert('Error: Note not found!');
+            }
         }
+
 
         // Log Out function
         function logout() {
@@ -131,7 +140,46 @@
         });
 
         // Load notes on page load
-        window.addEventListener('DOMContentLoaded', loadNotes);
+        window.addEventListener("DOMContentLoaded", function ()
+        {
+
+            loadCategories();
+            // Retrieve the note ID from the query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const noteId = urlParams.get("id");
+
+            if (noteId) {
+                // Load the note using the ID
+                const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
+                const noteToEdit = savedNotes.find((note) => note.id === noteId);
+
+                if (noteToEdit) {
+                    populateNoteForEditing(noteToEdit); // Populate form with note data
+                } else {
+                    alert("Note not found!");
+                    window.location.href = "/Notes/MyNotes"; // Redirect if the note isn't found
+                }
+            } else {
+                // If no ID is provided, clear the form for creating a new note
+                console.log("Creating a new note...");
+            }
+        });
+
+        function populateNoteForEditing(note) {
+            document.getElementById("noteHeader").value = note.header || "";
+            document.getElementById("noteCategory").value = note.category || "";
+
+            const noteSections = document.getElementById("noteSections");
+            noteSections.innerHTML = ""; // Clear existing sections
+
+            note.sections.forEach((section, index) => {
+                const newSection = createSection(index + 1, section.title, section.text);
+                noteSections.appendChild(newSection);
+            });
+
+            sectionCount = note.sections.length;
+        }
+
     </script>
 }
 
