@@ -68,23 +68,42 @@
                 const noteToEdit = savedNotes[editNoteIndex];
 
                 if (noteToEdit) {
-                    // Populate the editor fields with the note's data
+                    // Populate the header
                     document.getElementById('noteHeader').value = noteToEdit.header;
 
                     const sectionsContainer = document.getElementById('sectionsContainer');
                     sectionsContainer.innerHTML = ''; // Clear any existing sections
 
-                    noteToEdit.sections.forEach(section => {
+                    // Check if there are any sections in the note
+                    if (noteToEdit.sections && noteToEdit.sections.length > 0) {
+                        // Loop through sections and add each one
+                        noteToEdit.sections.forEach(section => {
+                            const sectionDiv = document.createElement('div');
+                            sectionDiv.classList.add('section');
+
+                            sectionDiv.innerHTML = `
+                                <textarea class="section-text">${section.text}</textarea>
+                                <button class="remove-section-btn">Remove</button>
+                            `;
+
+                            sectionsContainer.appendChild(sectionDiv);
+                        });
+
+                        // Pre-select or focus on the first section
+                        const firstSectionTextArea = sectionsContainer.querySelector('textarea');
+                        if (firstSectionTextArea) {
+                            firstSectionTextArea.focus(); // Focus on the first section to make it active
+                        }
+                    } else {
+                        // If no sections are available, display a default empty section
                         const sectionDiv = document.createElement('div');
                         sectionDiv.classList.add('section');
-
                         sectionDiv.innerHTML = `
-                            <textarea class="section-text">${section.text}</textarea>
+                            <textarea class="section-text" placeholder="Start writing your note..."></textarea>
                             <button class="remove-section-btn">Remove</button>
                         `;
-
                         sectionsContainer.appendChild(sectionDiv);
-                    });
+                    }
                 } else {
                     console.warn('No note found for the provided index.');
                 }
@@ -94,38 +113,41 @@
             localStorage.removeItem('editNoteIndex');
         });
 
+
+
         // Save note function
         document.getElementById('saveNoteBtn').addEventListener('click', () => {
-            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            const editNoteIndex = localStorage.getItem('editNoteIndex'); // Check if editing an existing note
+    const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+    const editNoteIndex = localStorage.getItem('editNoteIndex'); // Check if editing an existing note
 
-            const updatedNote = {
-                header: document.getElementById('noteHeader').value,
-                sections: Array.from(document.querySelectorAll('.section-text')).map(section => ({
-                    text: section.value
-                }))
-            };
+    const updatedNote = {
+        header: document.getElementById('noteHeader').value,
+        sections: Array.from(document.querySelectorAll('.section-text')).map(section => ({
+            text: section.value,
+            selection: getSelectedText()  // Capture selected text
+        }))
+    };
 
-            if (editNoteIndex !== null) {
-                // Update the existing note
-                savedNotes[editNoteIndex] = updatedNote;
-            } else {
-                // Add a new note
-                savedNotes.push(updatedNote);
-            }
+    if (editNoteIndex !== null) {
+        // Update the existing note
+        savedNotes[editNoteIndex] = updatedNote;
+    } else {
+        // Add a new note
+        savedNotes.push(updatedNote);
+    }
 
-            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+    localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
 
-            // Remove any old prompt (e.g., alert()) and show the modal instead
-            const savePrompt = document.getElementById('savePrompt');
-            savePrompt.classList.add('show');
+    // Show the save confirmation modal
+    const savePrompt = document.getElementById('savePrompt');
+    savePrompt.classList.add('show');
 
-            // Redirect to MyNotes after 2 seconds (or when the user closes the modal)
-            setTimeout(() => {
-                savePrompt.classList.remove('show');
-                window.location.href = "/Notes/MyNotes";
-            }, 2000);
-        });
+    // Redirect to MyNotes after 2 seconds (or when the user closes the modal)
+    setTimeout(() => {
+        savePrompt.classList.remove('show');
+        window.location.href = "/Notes/MyNotes";
+    }, 2000);
+});
 
         // Close Save Prompt
         document.getElementById('closeSavePrompt').addEventListener('click', () => {
@@ -334,12 +356,14 @@
             sectionDiv.innerHTML = `
                     <input type="text" class="section-title" placeholder="Point ${number}" value="${title}" />
                     <textarea class="section-text" placeholder="Write your text here...">${text}</textarea>
+                    <button class="remove-section-btn" onclick="removeSection(this)">Remove</button>
                 `;
             return sectionDiv;
         }
 
         // Add a new section
         document.getElementById("addSectionBtn").addEventListener("click", function () {
+            sectionCount = 1;
             sectionCount++;
             const noteSections = document.getElementById("noteSections");
             const newSection = createSection(sectionCount);
@@ -347,6 +371,40 @@
 
             saveDraft(); // Auto-save after adding a new section
         });
+
+
+        function removeSection(button) {
+            const sectionDiv = button.closest('.note-section');
+            sectionDiv.remove();
+            sectionCount--; // Decrease the section count after removing a section
+        }
+
+        // Load the page with one section already displayed (on page load)
+        document.addEventListener("DOMContentLoaded", () => {
+            const noteSections = document.getElementById("noteSections");
+
+            // Create and append the first section on page load
+            const initialSection = createSection(sectionCount, "Point 1", "");
+            noteSections.appendChild(initialSection);
+
+            // Optional: You can call saveDraft here if you want to auto-save as the page loads
+            saveDraft();
+        });
+
+        // Example saveDraft function (you can adjust based on your actual save logic)
+        function saveDraft() {
+            const sections = [];
+            const sectionElements = document.querySelectorAll('.note-section');
+
+            sectionElements.forEach((section, index) => {
+                const title = section.querySelector('.section-title').value;
+                const text = section.querySelector('.section-text').value;
+                sections.push({ title, text });
+            });
+
+            // Save sections to localStorage or any other storage
+            localStorage.setItem('noteSections', JSON.stringify(sections));
+        }
 
 
         // Load categories from localStorage
