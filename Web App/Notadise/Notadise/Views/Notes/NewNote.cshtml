@@ -40,6 +40,16 @@
 
     <!-- Save Button -->
     <button id="saveNoteBtn" class="save-note-btn">Save</button>
+
+    <div id="savePrompt" class="modal">
+    <div class="modal-content">
+        <h3>Success!</h3>
+        <p>Your note has been saved successfully.</p>
+        <button id="closeSavePrompt" class="close-btn">Close</button>
+    </div>
+</div>
+
+
 </div>
 
 @section Scripts {
@@ -50,40 +60,86 @@
         const defaultCategories = ["School", "University", "Work", "Art Projects"];
 
         // Load the page
-        window.addEventListener("DOMContentLoaded", function () {
-            loadCategories(); // Load categories from localStorage or defaults
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            const editNoteIndex = localStorage.getItem('editNoteIndex'); // Get the index of the note to edit
 
-            // Check for a note ID in the query string
-            const urlParams = new URLSearchParams(window.location.search);
-            const noteId = urlParams.get("id");
-
-            if (noteId) {
-                // Load the specific note by ID
-                const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
-                const noteToEdit = savedNotes.find((note) => note.id === noteId);
+            if (editNoteIndex !== null) {
+                const noteToEdit = savedNotes[editNoteIndex];
 
                 if (noteToEdit) {
-                    // Populate the form with the note data
-                    populateNoteForEditing(noteToEdit);
+                    // Populate the editor fields with the note's data
+                    document.getElementById('noteHeader').value = noteToEdit.header;
 
-                    // Save the edit index for saving later
-                    const editNoteIndex = savedNotes.findIndex((note) => note.id === noteId);
-                    localStorage.setItem("editNoteIndex", editNoteIndex);
+                    const sectionsContainer = document.getElementById('sectionsContainer');
+                    sectionsContainer.innerHTML = ''; // Clear any existing sections
+
+                    noteToEdit.sections.forEach(section => {
+                        const sectionDiv = document.createElement('div');
+                        sectionDiv.classList.add('section');
+
+                        sectionDiv.innerHTML = `
+                            <textarea class="section-text">${section.text}</textarea>
+                            <button class="remove-section-btn">Remove</button>
+                        `;
+
+                        sectionsContainer.appendChild(sectionDiv);
+                    });
                 } else {
-                    alert("Note not found!");
-                    window.location.href = "/Notes/MyNotes"; // Redirect if note doesn't exist
+                    console.warn('No note found for the provided index.');
                 }
-            } else {
-                // Clear draft data for a new note
-                localStorage.removeItem("noteHeaderDraft");
-                localStorage.removeItem("noteSectionsDraft");
             }
+
+            // Optional: Clear the edit index from localStorage if you want the editor to reset on a new note creation
+            localStorage.removeItem('editNoteIndex');
         });
+
+        // Save note function
+        document.getElementById('saveNoteBtn').addEventListener('click', () => {
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            const editNoteIndex = localStorage.getItem('editNoteIndex'); // Check if editing an existing note
+
+            const updatedNote = {
+                header: document.getElementById('noteHeader').value,
+                sections: Array.from(document.querySelectorAll('.section-text')).map(section => ({
+                    text: section.value
+                }))
+            };
+
+            if (editNoteIndex !== null) {
+                // Update the existing note
+                savedNotes[editNoteIndex] = updatedNote;
+            } else {
+                // Add a new note
+                savedNotes.push(updatedNote);
+            }
+
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+
+            // Remove any old prompt (e.g., alert()) and show the modal instead
+            const savePrompt = document.getElementById('savePrompt');
+            savePrompt.classList.add('show');
+
+            // Redirect to MyNotes after 2 seconds (or when the user closes the modal)
+            setTimeout(() => {
+                savePrompt.classList.remove('show');
+                window.location.href = "/Notes/MyNotes";
+            }, 2000);
+        });
+
+        // Close Save Prompt
+        document.getElementById('closeSavePrompt').addEventListener('click', () => {
+            const savePrompt = document.getElementById('savePrompt');
+            savePrompt.classList.remove('show');
+            window.location.href = "/Notes/MyNotes"; // Redirect to MyNotes page
+        });
+
+
 
         // Load categories from localStorage or use defaults
         function loadCategories()
         {
-            const defaultCategories = ["Work", "Personal", "Ideas"];
+            const defaultCategories = ["School", "Work", "University", "Art Projects"];
             const savedCategories = JSON.parse(localStorage.getItem("categories")) || defaultCategories;
 
             const categoryDropdown = document.getElementById("noteCategory");
@@ -118,35 +174,43 @@
 
 
         // Save the final note to localStorage
-        document.getElementById("saveNoteBtn").addEventListener("click", function () {
-            const noteData = collectNoteData();
+        document.getElementById('saveNoteBtn').addEventListener('click', () => {
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            const editNoteIndex = localStorage.getItem('editNoteIndex'); // Check if editing an existing note
 
-            // Generate a unique ID for the note (if it's a new note)
-            if (!noteData.id) {
-                noteData.id = Date.now().toString(); // Use timestamp as a unique ID
-            }
+            const updatedNote = {
+                header: document.getElementById('noteHeader').value,
+                sections: Array.from(document.querySelectorAll('.section-text')).map(section => ({
+                    text: section.value
+                }))
+            };
 
-            // Retrieve saved notes or initialize an empty array
-            const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
-            const editNoteIndex = localStorage.getItem("editNoteIndex");
-
-            if (editNoteIndex) {
-                // If editing, update the specific note
-                savedNotes[editNoteIndex] = noteData;
-                localStorage.removeItem("editNoteIndex"); // Clear the edit index after saving
+            if (editNoteIndex !== null) {
+                // Update the existing note
+                savedNotes[editNoteIndex] = updatedNote;
             } else {
-                // If creating a new note, add it to the list
-                savedNotes.push(noteData);
+                // Add a new note
+                savedNotes.push(updatedNote);
             }
 
-            // Save updated notes list
-            localStorage.setItem("savedNotes", JSON.stringify(savedNotes));
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
 
-            // Clear the draft after saving
-            localStorage.removeItem("noteDraft");
+            // Show the save confirmation modal
+            const savePrompt = document.getElementById('savePrompt');
+            savePrompt.classList.add('show');
 
-            // Redirect to My Notes page
-            window.location.href = "/Notes/MyNotes";
+            // Redirect to MyNotes after 2 seconds (or when the user closes the modal)
+            setTimeout(() => {
+                savePrompt.classList.remove('show');
+                window.location.href = "/Notes/MyNotes";
+            }, 2000);
+        });
+
+        // Close Save Prompt
+        document.getElementById('closeSavePrompt').addEventListener('click', () => {
+            const savePrompt = document.getElementById('savePrompt');
+            savePrompt.classList.remove('show');
+            window.location.href = "/Notes/MyNotes"; // Redirect to MyNotes page
         });
 
 
@@ -458,4 +522,58 @@
     .save-note-btn:hover {
         background-color: #764DA9;
     }
+
+    .modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+    .modal.show {
+        display: flex; /* Show modal when the class "show" is added */
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        width: 80%;
+        max-width: 400px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+            color: #8A64AD; /* Green success color */
+    }
+
+    .modal-content p {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+
+    .close-btn {
+        background-color: #8A64AD;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .close-btn:hover {
+            background-color: #8A64AD;
+    }
+
 </style>
