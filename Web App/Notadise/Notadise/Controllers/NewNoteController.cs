@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Notadise.Controllers
 {
@@ -20,11 +21,21 @@ namespace Notadise.Controllers
             return View();
         }
 
+        // Render the School Notes page
+        public IActionResult School()
+        {
+            // Filter notes by category "School"
+            var schoolNotes = Notes.Where(note => note.Category == "School").ToList();
+
+            // Pass the filtered notes to the view
+            return View(schoolNotes);
+        }
+
         // API to save a note
         [HttpPost]
         public IActionResult SaveNote([FromBody] Note newNote)
         {
-            if (!string.IsNullOrEmpty(newNote.Title) && !string.IsNullOrEmpty(newNote.Content))
+            if (!string.IsNullOrEmpty(newNote.Title) && !string.IsNullOrEmpty(newNote.Content) && !string.IsNullOrEmpty(newNote.Category))
             {
                 Notes.Add(newNote);
                 return Ok();
@@ -52,10 +63,11 @@ namespace Notadise.Controllers
         }
     }
 
-    // Note model
+    // Updated Note model
     public class Note
     {
         public string Title { get; set; }
         public string Content { get; set; }
+        public string Category { get; set; } // New property for categorization
     }
 }

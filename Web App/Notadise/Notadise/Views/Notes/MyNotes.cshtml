@@ -22,11 +22,12 @@
             <h1>Recent notes:</h1>
             <div class="filter-bar">
                 <span class="filter-label">Filter: </span>
-                <span class="filter-item">School</span>
-                <span class="filter-item">Work</span>
-                <span class="filter-item">University</span>
-                <span class="filter-item">Art Projects</span>
-                <span class="filter-item">Custom categories</span>
+                <!-- Updated Filter Items -->
+                <span class="filter-item" onclick="filterNotes('School')">School</span>
+                <span class="filter-item" onclick="filterNotes('work')">Work</span>
+                <span class="filter-item" onclick="filterNotes('university')">University</span>
+                <span class="filter-item" onclick="filterNotes('art-projects')">Art Projects</span>
+                <span class="filter-item" onclick="filterNotes('custom-categories')">Custom categories</span>
             </div>
             <br />
             <div class="notes-grid" id="notesGrid">
@@ -73,12 +74,12 @@
 
                     noteCard.innerHTML = `
                                 <h3 class="note-title">${note.header}</h3>
-                            <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
-                            <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
-                        `;
+                                <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
+                                <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
+                            `;
 
                     noteCard.addEventListener('click', (event) => {
-                    if (event.target.tagName !== 'BUTTON') {
+                        if (event.target.tagName !== 'BUTTON') {
                             editNote(index);
                         }
                     });
@@ -112,6 +113,21 @@
             window.location.href = "/Notes/NewNote";
         }
 
+        function filterNotes(category) {
+            // Redirect to specific pages based on the category
+            if (category === 'School') {
+                window.location.href = "/Notes/School";
+            } else if (category === 'work') {
+                window.location.href = "/Notes/Work";
+            } else if (category === 'university') {
+                window.location.href = "/Notes/University";
+            } else if (category === 'art-projects') {
+                window.location.href = "/Notes/ArtProjects";
+            } else if (category === 'custom-categories') {
+                window.location.href = "/Notes/CustomCategories";
+            }
+        }
+
         document.getElementById('searchBar').addEventListener('input', function () {
             const query = this.value.toLowerCase();
             const noteCards = document.querySelectorAll('.note-card');
@@ -125,6 +141,7 @@
         window.addEventListener('DOMContentLoaded', loadNotes);
     </script>
 }
+
 
 <style>
     * {

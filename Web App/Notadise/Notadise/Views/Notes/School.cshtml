@@ -1,0 +1,119 @@
+﻿@model List<Notadise.Controllers.Note>
+
+@{
+    ViewData["Title"] = "School Notes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-container">
+    <h1>School Notes</h1>
+
+    <div class="notes-grid">
+        @if (Model.Any())
+        {
+            foreach (var note in Model)
+            {
+                <div class="note-card">
+                    <h3 class="note-title">@note.Title</h3>
+                    <p class="note-text">@note.Content</p>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        // Load notes from localStorage
+        function loadSchoolNotes() {
+            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
+            const notesContainer = document.getElementById('notesContainer');
+            notesContainer.innerHTML = ""; // Clear previous notes
+
+            // Filter notes with the category "School"
+            const schoolNotes = savedNotes.filter(note => note.category === "School");
+
+
+            // Display each note in the School category
+            schoolNotes.forEach((note, index) => {
+                const noteDiv = document.createElement('div');
+                noteDiv.classList.add('note-card');
+                noteDiv.innerHTML = `
+                    <h2>${note.header || "Untitled Note"}</h2>
+                    <div class="note-content">
+                        ${note.sections.map(section => `
+                            <div class="note-section">
+                                <h4>${section.title || "Untitled Section"}</h4>
+                                <p>${section.text}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="edit-btn" onclick="editNote(${index})">Edit</button>
+                `;
+                notesContainer.appendChild(noteDiv);
+            });
+        }
+
+        // Redirect to edit the selected note
+        function editNote(noteIndex) {
+            localStorage.setItem('editNoteIndex', noteIndex); // Save index to localStorage
+            window.location.href = "/Notes/NewNote"; // Redirect to the New Note page
+        }
+
+        // Load School Notes on page load
+        document.addEventListener('DOMContentLoaded', loadSchoolNotes);
+    </script>
+}
+<style>
+    .school-notes-container {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .note-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        text-align: left;
+    }
+
+        .note-card h2 {
+            color: #333;
+        }
+
+    .note-section h4 {
+        color: #555;
+    }
+
+    .edit-btn {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+
+    .back-btn {
+        text-decoration: none;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+
+</style>
