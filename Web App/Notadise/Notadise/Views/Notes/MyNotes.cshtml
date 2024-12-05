@@ -49,37 +49,40 @@
 
 @section Scripts {
     <script>
-        // Global reference to the index of the note being deleted
         let noteToDeleteIndex = null;
 
-        // Function to load saved notes
         function loadNotes() {
             const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            console.log('Loaded Notes from localStorage:', savedNotes); // This will help you see the saved notes
+            console.log('Loaded Notes from localStorage:', savedNotes);
 
             const notesGrid = document.getElementById('notesGrid');
-            notesGrid.innerHTML = ''; // Clear previous notes
+            notesGrid.innerHTML = '';
 
             if (savedNotes.length === 0) {
                 const noNotesMessage = document.createElement('p');
                 noNotesMessage.textContent = 'No notes available!';
-                notesGrid.appendChild(noNotesMessage); // Display a message if no notes are found
+                notesGrid.appendChild(noNotesMessage);
+                return;
             }
 
             savedNotes.forEach((note, index) => {
-                // Check if the note is valid before accessing its properties
                 if (note && note.header) {
                     const noteCard = document.createElement('div');
                     noteCard.classList.add('note-card');
                     noteCard.setAttribute('data-index', index);
+
                     noteCard.innerHTML = `
-                        <h3 class="note-title">${note.header}</h3>
-                        <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
-                        <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
-                    `;
+                                <h3 class="note-title">${note.header}</h3>
+                            <p class="note-text">${note.sections[0]?.text || 'No content available'}</p>
+                            <button class="delete-btn" onclick="showDeletePrompt(${index})">Delete</button>
+                        `;
+
                     noteCard.addEventListener('click', (event) => {
-                        if (event.target.tagName !== 'BUTTON') editNote(index);
+                        if (event.target.tagName !== 'BUTTON') {
+                            editNote(index);
+                        }
                     });
+
                     notesGrid.appendChild(noteCard);
                 } else {
                     console.warn('Skipping invalid note:', note);
@@ -87,48 +90,28 @@
             });
         }
 
-
-        // Show delete prompt modal
         function showDeletePrompt(index) {
             noteToDeleteIndex = index;
-            document.getElementById('deletePrompt').classList.add('show'); // Show the modal
+            document.getElementById('deletePrompt').classList.add('show');
         }
 
-        // Confirm delete
         function confirmDelete() {
             let savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            savedNotes.splice(noteToDeleteIndex, 1); // Remove the note
-            localStorage.setItem('savedNotes', JSON.stringify(savedNotes)); // Save updated notes
-            loadNotes(); // Reload the notes grid
-            closeDeletePrompt(); // Close the modal
+            savedNotes.splice(noteToDeleteIndex, 1);
+            localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+            loadNotes();
+            closeDeletePrompt();
         }
 
-        // Close delete prompt modal
         function closeDeletePrompt() {
             document.getElementById('deletePrompt').classList.remove('show');
         }
 
-        // Edit Note
         function editNote(index) {
-            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            const noteToEdit = savedNotes[index];
-
-            if (noteToEdit) {
-                // Redirect with the note's unique ID
-                window.location.href = `/Notes/NewNote?id=${noteToEdit.id}`;
-            } else {
-                alert('Error: Note not found!');
-            }
+            localStorage.setItem('editNoteIndex', index);
+            window.location.href = "/Notes/NewNote";
         }
 
-
-        // Log Out function
-        function logout() {
-            // Redirect to a logout route or clear user session
-            window.location.href = '/Identity/Account/Register'; // Adjust URL to your logout endpoint
-        }
-
-        // Search Functionality
         document.getElementById('searchBar').addEventListener('input', function () {
             const query = this.value.toLowerCase();
             const noteCards = document.querySelectorAll('.note-card');
@@ -139,47 +122,7 @@
             });
         });
 
-        // Load notes on page load
-        window.addEventListener("DOMContentLoaded", function ()
-        {
-
-            loadCategories();
-            // Retrieve the note ID from the query string
-            const urlParams = new URLSearchParams(window.location.search);
-            const noteId = urlParams.get("id");
-
-            if (noteId) {
-                // Load the note using the ID
-                const savedNotes = JSON.parse(localStorage.getItem("savedNotes")) || [];
-                const noteToEdit = savedNotes.find((note) => note.id === noteId);
-
-                if (noteToEdit) {
-                    populateNoteForEditing(noteToEdit); // Populate form with note data
-                } else {
-                    alert("Note not found!");
-                    window.location.href = "/Notes/MyNotes"; // Redirect if the note isn't found
-                }
-            } else {
-                // If no ID is provided, clear the form for creating a new note
-                console.log("Creating a new note...");
-            }
-        });
-
-        function populateNoteForEditing(note) {
-            document.getElementById("noteHeader").value = note.header || "";
-            document.getElementById("noteCategory").value = note.category || "";
-
-            const noteSections = document.getElementById("noteSections");
-            noteSections.innerHTML = ""; // Clear existing sections
-
-            note.sections.forEach((section, index) => {
-                const newSection = createSection(index + 1, section.title, section.text);
-                noteSections.appendChild(newSection);
-            });
-
-            sectionCount = note.sections.length;
-        }
-
+        window.addEventListener('DOMContentLoaded', loadNotes);
     </script>
 }
 
@@ -302,15 +245,19 @@
     }
 
     .note-card {
-        background-color: #eeeeee;
-        border: 1px solid #ddd;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        height: 250px;
-        width: 250px;
-        display: inline-block;
-        margin-bottom: 15px;
+        background-color: #f8f9fa; /* Light background */
+        border: 1px solid #ddd; /* Border for better visibility */
+        border-radius: 8px; /* Rounded corners */
+        padding: 16px; /* Space inside the card */
+        margin: 16px; /* Space between cards */
+        max-width: 300px;
+        max-height: 300px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+        overflow: hidden; /* Prevent content from overflowing */
+        text-overflow: ellipsis; /* Add ellipsis for long text */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Space between title and content */
     }
 
         .note-card h3 {
@@ -323,18 +270,37 @@
             color: #555;
         }
 
+    .note-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #6c63ff; /* Change to match your theme */
+        margin-bottom: 8px;
+        word-wrap: break-word; /* Ensure long words break into the next line */
+    }
+
+    .note-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+        max-height: 100px; /* Limit the height for text content */
+        overflow: hidden; /* Hide overflow text */
+        text-overflow: ellipsis; /* Add ellipsis for truncated text */
+        word-wrap: break-word; /* Ensure text doesn't break the container */
+    }
+
     .delete-btn {
-        background-color: #8A64AD;
-        color: white;
+        margin-top: 8px;
+        background-color: #8A64AD; /* Your button color */
+        color: #fff;
         border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.8rem;
+        padding: 8px 12px;
+        border-radius: 4px;
         cursor: pointer;
+        align-self: flex-end; /* Align button to the bottom right */
     }
 
         .delete-btn:hover {
-            background-color: #8A64AD;
+            background-color: #6c63ff;
         }
 
     /* Modal styling */
