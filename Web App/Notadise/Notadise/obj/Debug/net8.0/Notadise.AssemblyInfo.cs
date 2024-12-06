@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Notadise")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7033f7cfbba02ab1589b76a4ad525c4383045405")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f90d91955940e48a057419f928eda8a1bca22ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("Notadise")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Notadise")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

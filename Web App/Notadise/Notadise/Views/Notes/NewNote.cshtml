@@ -236,17 +236,26 @@
         }
 
         function saveNote() {
-            const title = document.getElementById("noteTitle").value;
-            const content = document.getElementById("noteContent").value;
-            const category = document.getElementById("noteCategory").value;
+            const header = document.getElementById("noteHeader").value.trim();
+            const category = document.getElementById("noteCategory").value.trim();
+            const sections = Array.from(document.querySelectorAll(".note-section")).map(section => ({
+                title: section.querySelector(".section-title").value.trim(),
+                text: section.querySelector(".section-text").value.trim(),
+            }));
+
+            if (!header || !category || sections.length === 0) {
+                alert("Please fill in all required fields!");
+                return;
+            }
+
+            const content = sections.map(section => `${section.title}: ${section.text}`).join("\n\n");
 
             const newNote = {
-                Title: title,
-                Content: content,
-                Category: category,
+                title: header,
+                content: content,
+                category: category,
+                lastEdited: new Date().toISOString(), // Add the last edited timestamp
             };
-
-            console.log("Saving note:", newNote);
 
             fetch("/Notes/SaveNote", {
                 method: "POST",
@@ -257,12 +266,19 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        console.log("Note saved successfully");
+                        console.log("Note saved successfully!");
+                        window.location.href = "/"; // Redirect to home page after saving
                     } else {
-                        console.error("Failed to save note");
+                        console.error("Failed to save the note.");
+                        alert("There was an issue saving your note. Please try again.");
                     }
+                })
+                .catch(error => {
+                    console.error("Error saving the note:", error);
+                    alert("There was an error saving your note. Please try again.");
                 });
         }
+
 
 
     </script>
