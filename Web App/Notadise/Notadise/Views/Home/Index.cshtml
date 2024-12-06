@@ -1,8 +1,303 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="main-container">
+    <!-- Welcome Back Section -->
+    <div class="welcome-section">
+        <h1>Welcome Back</h1>
+        <div class="recommend-scroll">
+            <div class="recommend-container">
+                <!-- Example Recommended Note Card -->
+                <div class="recommend-card">
+                    <h3 class="recommend-title">School</h3>
+                    <p class="recommend-content">
+                        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.
+                    </p>
+                </div>
+                <!-- Add more cards dynamically here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access Section -->
+    <div class="quick-access-section">
+        <h2>Quick Access</h2>
+        <div class="quick-access-buttons">
+            <button class="filter-btn active" onclick="filterNotes('all')">All</button>
+            <button class="filter-btn" onclick="filterNotes('recent')">Recent</button>
+            <button class="filter-btn" onclick="filterNotes('shared')">Shared</button>
+            <button class="filter-btn" onclick="filterNotes('favs')">Favs</button>
+        </div>
+        <div class="notes-container">
+            <!-- Example Note Card -->
+            <div class="note-card">
+                <h3 class="note-title">Biology Class Notes</h3>
+                <p class="note-meta">Yesterday 09:34 AM</p>
+                <p class="note-shared">You shared with Notadise</p>
+                <button class="star-btn" onclick="toggleFavourite(this)">⭐</button>
+                <input type="checkbox" class="learned-checkbox" />
+            </div>
+            <!-- Add more cards dynamically here -->
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Initialize recommended notes
+        function loadRecommendedNotes() {
+            const recommendContainer = document.querySelector('.recommend-container');
+            recommendContainer.innerHTML = ''; // Clear existing notes
+
+            const recommendedNotes = [
+                { title: 'School', content: 'Lorem ipsum, or lipsum, as it is sometimes known...' },
+                { title: 'Work', content: 'Work-related note about project deadlines...' },
+                { title: 'Art Projects', content: 'Art inspiration for next painting...' },
+                { title: 'School', content: 'Math homework guidelines and tips...' }
+            ];
+
+            recommendedNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.classList.add('recommend-card');
+                card.innerHTML = `
+                            <h3 class="recommend-title">${note.title}</h3>
+                            <p class="recommend-content">${note.content}</p>
+                        `;
+                recommendContainer.appendChild(card);
+            });
+        }
+
+        // Initialize quick access notes
+        function loadNotes(filter = 'all') {
+            const notesContainer = document.querySelector('.notes-container');
+            notesContainer.innerHTML = ''; // Clear existing notes
+
+            const allNotes = [
+                { title: 'Biology Class Notes', edited: 'Yesterday 09:34 AM', shared: true },
+                { title: 'Physics Class Notes', edited: 'Yesterday 08:00 AM', shared: false },
+                { title: 'Art Project Ideas', edited: 'Last Week', shared: true },
+                { title: 'Work Meeting Notes', edited: 'Two Days Ago', shared: false }
+            ];
+
+            let filteredNotes = [];
+            switch (filter) {
+                case 'recent':
+                    filteredNotes = allNotes.slice(0, 3); // Example: only show recent 3
+                    break;
+                case 'shared':
+                    filteredNotes = allNotes.filter(note => note.shared);
+                    break;
+                case 'favs':
+                    filteredNotes = allNotes.filter(note => note.favourite);
+                    break;
+                default:
+                    filteredNotes = allNotes;
+            }
+
+            filteredNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.classList.add('note-card');
+                card.innerHTML = `
+                            <h3 class="note-title">${note.title}</h3>
+                            <p class="note-meta">${note.edited}</p>
+                            <p class="note-shared">${note.shared ? 'You shared with Notadise' : ''}</p>
+                            <button class="star-btn" onclick="toggleFavourite(this)">⭐</button>
+                            <input type="checkbox" class="learned-checkbox" />
+                        `;
+                notesContainer.appendChild(card);
+            });
+        }
+
+        function toggleFavourite(button) {
+            const noteCard = button.closest('.note-card');
+            noteCard.classList.toggle('favourite');
+            // Update logic for "favourite" notes here
+        }
+
+        function filterNotes(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="filterNotes('${filter}')"]`).classList.add('active');
+            loadNotes(filter);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadRecommendedNotes();
+            loadNotes();
+        });
+    </script>
+}
+
+<style>
+    /* Global Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f3fd;
+        color: #333;
+    }
+
+    .main-container {
+        padding: 20px;
+    }
+
+    h1, h2 {
+        color: #6a4baf;
+        margin: 0;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+        margin-bottom: 30px;
+    }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+    .recommend-scroll {
+        overflow-x: auto;
+        display: flex;
+        gap: 15px;
+        padding: 10px 0;
+    }
+
+    .recommend-container {
+        display: flex;
+        gap: 20px;
+    }
+
+    .recommend-card {
+        min-width: 200px;
+        max-width: 250px;
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #e6e1f8;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+    }
+
+        .recommend-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .recommend-title {
+        font-size: 1.2rem;
+        color: #6a4baf;
+        margin-bottom: 10px;
+    }
+
+    .recommend-content {
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    /* Quick Access Section */
+    .quick-access-section {
+        margin-top: 30px;
+    }
+
+        .quick-access-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+    .quick-access-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        border-radius: 20px;
+        background-color: #d8cffe;
+        color: #6a4baf;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: #6a4baf;
+            color: #fff;
+        }
+
+    /* Notes Section */
+    .notes-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .note-card {
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: transform 0.2s ease;
+    }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .note-title {
+        font-size: 1.1rem;
+        color: #333;
+        margin: 0;
+    }
+
+    .note-meta {
+        font-size: 0.9rem;
+        color: #888;
+        margin-top: 5px;
+    }
+
+    .note-shared {
+        font-size: 0.8rem;
+        color: #6a4baf;
+    }
+
+    .star-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        color: #ffc107;
+        cursor: pointer;
+        margin-right: 15px;
+        transition: transform 0.2s ease;
+    }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+    .learned-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    /* Scrollbar Styling */
+    .recommend-scroll::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .recommend-scroll::-webkit-scrollbar-thumb {
+        background-color: #d8cffe;
+        border-radius: 10px;
+    }
+
+    .recommend-scroll::-webkit-scrollbar-track {
+        background-color: #f7f3fd;
+    }
+</style>

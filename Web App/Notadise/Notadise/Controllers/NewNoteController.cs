@@ -22,14 +22,48 @@ namespace Notadise.Controllers
         }
 
         // Render the School Notes page
+        [HttpGet]
         public IActionResult School()
         {
+            // Debug log for all saved notes
+            Console.WriteLine("All Notes:");
+            foreach (var note in Notes)
+            {
+                Console.WriteLine($"Title: {note.Title}, Category: {note.Category}");
+            }
+
             // Filter notes by category "School"
-            var schoolNotes = Notes.Where(note => note.Category == "School").ToList();
+            var schoolNotes = Notes.Where(note => string.Equals(note.Category, "School", StringComparison.OrdinalIgnoreCase)).ToList();
+
+
+            // Debug log for filtered notes
+            Console.WriteLine("Filtered School Notes:");
+            foreach (var note in schoolNotes)
+            {
+                Console.WriteLine($"Title: {note.Title}, Category: {note.Category}");
+            }
 
             // Pass the filtered notes to the view
             return View(schoolNotes);
         }
+
+        [HttpGet]
+        public IActionResult GetSchoolNotes()
+        {
+            // Filter the notes by the "School" category
+            var schoolNotes = Notes.Where(note => note.Category == "School").ToList();
+
+            // Check if the list is empty
+            if (schoolNotes == null || schoolNotes.Count == 0)
+            {
+                // Return an empty JSON array to prevent parsing issues
+                return Json(new List<Note>());
+            }
+
+            return Json(schoolNotes);
+        }
+
+
 
         // API to save a note
         [HttpPost]
@@ -38,6 +72,8 @@ namespace Notadise.Controllers
             if (!string.IsNullOrEmpty(newNote.Title) && !string.IsNullOrEmpty(newNote.Content) && !string.IsNullOrEmpty(newNote.Category))
             {
                 Notes.Add(newNote);
+                // Debug log to ensure the note is saved correctly
+                Console.WriteLine($"Saved Note: Title = {newNote.Title}, Category = {newNote.Category}");
                 return Ok();
             }
             return BadRequest("Invalid note data.");

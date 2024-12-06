@@ -6,19 +6,11 @@
 }
 
 <div class="main-container">
-    <h1>School Notes</h1>
-
-    <div class="notes-grid">
-        @if (Model.Any())
-        {
-            foreach (var note in Model)
-            {
-                <div class="note-card">
-                    <h3 class="note-title">@note.Title</h3>
-                    <p class="note-text">@note.Content</p>
-                </div>
-            }
-        }
+    <div class="content">
+        <h1>School Notes</h1>
+        <div id="schoolNotesGrid">
+            <!-- Notes will be dynamically loaded here -->
+        </div>
     </div>
 </div>
 
@@ -27,33 +19,46 @@
     <script>
         // Load notes from localStorage
         function loadSchoolNotes() {
-            const savedNotes = JSON.parse(localStorage.getItem('savedNotes')) || [];
-            const notesContainer = document.getElementById('notesContainer');
-            notesContainer.innerHTML = ""; // Clear previous notes
+            const schoolNotesGrid = document.getElementById('schoolNotesGrid');
+            if (!schoolNotesGrid) {
+                console.error("Element with id 'schoolNotesGrid' not found.");
+                return;
+            }
 
-            // Filter notes with the category "School"
-            const schoolNotes = savedNotes.filter(note => note.category === "School");
+            fetch('/Notes/GetSchoolNotes')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json(); // Parse the response as JSON
+                })
+                .then(notes => {
+                    if (!Array.isArray(notes)) {
+                        throw new Error('Invalid JSON response: Expected an array.');
+                    }
 
+                    if (notes.length === 0) {
+                        schoolNotesGrid.innerHTML = '<p>No notes available under the School category!</p>';
+                        return;
+                    }
 
-            // Display each note in the School category
-            schoolNotes.forEach((note, index) => {
-                const noteDiv = document.createElement('div');
-                noteDiv.classList.add('note-card');
-                noteDiv.innerHTML = `
-                    <h2>${note.header || "Untitled Note"}</h2>
-                    <div class="note-content">
-                        ${note.sections.map(section => `
-                            <div class="note-section">
-                                <h4>${section.title || "Untitled Section"}</h4>
-                                <p>${section.text}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button class="edit-btn" onclick="editNote(${index})">Edit</button>
-                `;
-                notesContainer.appendChild(noteDiv);
-            });
+                    schoolNotesGrid.innerHTML = '';
+                    notes.forEach(note => {
+                        const noteCard = document.createElement('div');
+                        noteCard.classList.add('note-card');
+                        noteCard.innerHTML = `
+                            <h3 class="note-title">${note.title}</h3>
+                            <p class="note-content">${note.content}</p>
+                        `;
+                        schoolNotesGrid.appendChild(noteCard);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching school notes:', error);
+                    schoolNotesGrid.innerHTML = '<p>Failed to load school notes. Please try again later.</p>';
+                });
         }
+
 
         // Redirect to edit the selected note
         function editNote(noteIndex) {

@@ -235,6 +235,36 @@
             }, 2000);
         }
 
+        function saveNote() {
+            const title = document.getElementById("noteTitle").value;
+            const content = document.getElementById("noteContent").value;
+            const category = document.getElementById("noteCategory").value;
+
+            const newNote = {
+                Title: title,
+                Content: content,
+                Category: category,
+            };
+
+            console.log("Saving note:", newNote);
+
+            fetch("/Notes/SaveNote", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newNote),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Note saved successfully");
+                    } else {
+                        console.error("Failed to save note");
+                    }
+                });
+        }
+
+
     </script>
 }
 
