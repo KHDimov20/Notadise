@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .mode-buttons {
+            margin-bottom: 20px;
+        }
+
+            .mode-buttons button {
+                font-size: 16px;
+                padding: 10px 20px;
+                margin: 5px;
+                border: none;
+                border-radius: 20px;
+                background-color: #f2f2f2;
+                cursor: pointer;
+            }
+
+                .mode-buttons button.active {
+                    background-color: #007bff;
+                    color: white;
+                }
+
+        .timer-display {
+            font-size: 96px;
+            margin: 20px 0;
+        }
+
+        .timer-controls {
+            margin-top: 20px;
+        }
+
+            .timer-controls button {
+                font-size: 18px;
+                padding: 10px 20px;
+                margin: 5px;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+
+        .start-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .reset-btn {
+            background-color: #ffc107;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <!-- Mode Selection Buttons -->
+        <div class="mode-buttons">
+            <button id="pomodoroBtn" class="active" onclick="setMode('pomodoro')">Pomodoro</button>
+            <button id="shortBreakBtn" onclick="setMode('shortBreak')">Short Break</button>
+            <button id="longBreakBtn" onclick="setMode('longBreak')">Long Break</button>
+        </div>
+
+        <!-- Timer Display -->
+        <div class="timer-display" id="timerDisplay">30:00</div>
+
+        <!-- Timer Controls -->
+        <div class="timer-controls">
+            <button class="start-btn" onclick="startTimer()">Start</button>
+            <button class="reset-btn" onclick="resetTimer()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let timerDuration = 30 * 60; // Default to 30 minutes (Pomodoro)
+        let timeRemaining = timerDuration;
+        let timerInterval = null;
+        let currentMode = "pomodoro";
+
+        // Function to set mode
+        function setMode(mode) {
+            clearInterval(timerInterval); // Stop any running timer
+            timerInterval = null;
+
+            // Update mode
+            currentMode = mode;
+
+            // Update timer duration based on mode
+            if (mode === "pomodoro") {
+                timerDuration = 30 * 60; // 30 minutes
+            } else if (mode === "shortBreak") {
+                timerDuration = 10 * 60; // 10 minutes
+            } else if (mode === "longBreak") {
+                timerDuration = 20 * 60; // 20 minutes
+            }
+
+            timeRemaining = timerDuration;
+            updateDisplay();
+
+            // Update active button styles
+            document.getElementById("pomodoroBtn").classList.remove("active");
+            document.getElementById("shortBreakBtn").classList.remove("active");
+            document.getElementById("longBreakBtn").classList.remove("active");
+            document.getElementById(mode + "Btn").classList.add("active");
+        }
+
+        // Function to start the timer
+        function startTimer() {
+            if (timerInterval) return; // Prevent multiple intervals
+            timerInterval = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    alert(currentMode === "pomodoro" ? "Pomodoro session completed!" : "Break time is over!");
+                }
+            }, 1000);
+        }
+
+        // Function to reset the timer
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timeRemaining = timerDuration;
+            updateDisplay();
+        }
+
+        // Function to update the timer display
+        function updateDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById("timerDisplay").textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
