@@ -5,15 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
     <style>
+        /* General Styling */
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
             margin: 0;
             padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            color: white;
         }
 
         .timer-container {
-            text-align: center;
-            margin-top: 100px;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            display: inline-block;
         }
 
         .mode-buttons {
@@ -27,6 +39,7 @@
                 border: none;
                 border-radius: 20px;
                 background-color: #f2f2f2;
+                color: #333;
                 cursor: pointer;
             }
 
@@ -84,6 +97,21 @@
     </div>
 
     <script>
+        // Image URLs for Backgrounds
+        const backgrounds = [
+            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_t9PTOEue1WAU5NBEKlrLCuBT2H7OSEe98js7rK5dnXRLU2Fsb3VkUB7NqKJMTIOTV7_vI3SHKN02fIt1WryeK5xp-AfbDIjRT113PgnT5atCt595Emwgyi1rk3Hj84dULOe9ZGXgDoxb_bO7A3IOpdOk_GDMCOBNgBdqkcz6MdQTkeUhBWmA=w919-h516-p-k-no-nu',
+            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_vlpvGsMG7DtD1Rh_PswPODHzJX9E5J-nZLbATsbE6B9zKen8iQ0VzBL5H_DJ99IL1MZvIlUcHrLCMHZqF94fnP4CO9RNEk8vhFq5fuCwEA5EhUD2uM6Wb40wS9KoyGBSLXzOAbbNePHDDAw5C24MrCSV7J_WadKo7A7eY=w919-h516-p-k-no-nu',
+            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_tijZtcB52n7Ds6K-Uarf22VIaNdqqr76PbrEu2EU2ftVgooWiikvnivEpUnLpBnB2wCRDkUfV4OZrlyMjnB7Vt6WX76LpmLN1JbyLrmzAtnV5CGnCd-g4-BPEeUOM3idc9-1jFnEqSo08ao8SWXiJsca6dvi2pQLcwej8kfaHduQ=w919-h516-p-k-no-nu',
+            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_tL6vXWDX3RpkkUIUbxTXffu6MEUyJhd-7C6_8Mh9kbhV-CE3AKz1hvZGe-M0yky7iBCQAST5j4Fdagg1YfqgB8sIeoinZqAxLeER_TOb2ezYltlyUZDbkNWcs9trfdxtP79GjUAjBoIQmGt2cO=w919-h516-p-k-no-nu'
+        ];
+
+        // Function to select a random background
+        function setRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * backgrounds.length);
+            document.body.style.backgroundImage = `url('${backgrounds[randomIndex]}')`;
+        }
+
+        // Timer Variables and Functions
         let timerDuration = 30 * 60; // Default to 30 minutes (Pomodoro)
         let timeRemaining = timerDuration;
         let timerInterval = null;
@@ -146,8 +174,9 @@
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        // Initialize display
+        // Initialize display and random background
         updateDisplay();
+        setRandomBackground();
     </script>
 </body>
 </html>
