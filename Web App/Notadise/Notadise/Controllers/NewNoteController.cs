@@ -24,38 +24,6 @@ namespace Notadise.Controllers
             return View();
         }
 
-        // Render the School Notes page
-        [HttpGet]
-        public IActionResult School()
-        {
-            // Start a thread to log access to School notes
-            Thread logThread = new Thread(() =>
-            {
-                Console.WriteLine($"[{DateTime.Now}] School notes page accessed.");
-            });
-            logThread.IsBackground = true;
-            logThread.Start();
-
-            var schoolNotes = Notes.Where(note => string.Equals(note.Category, "School", StringComparison.OrdinalIgnoreCase)).ToList();
-            return View(schoolNotes);
-        }
-
-        [HttpGet]
-        public IActionResult GetSchoolNotes()
-        {
-            var schoolNotes = Notes.Where(note => string.Equals(note.Category, "School", StringComparison.OrdinalIgnoreCase)).ToList();
-
-            // Use a thread to log note retrieval
-            Thread logThread = new Thread(() =>
-            {
-                Console.WriteLine($"[{DateTime.Now}] Retrieved {schoolNotes.Count} school notes.");
-            });
-            logThread.IsBackground = true;
-            logThread.Start();
-
-            return Json(schoolNotes.Count > 0 ? schoolNotes : new List<Note>());
-        }
-
         // API to save or update a note
         [HttpPost]
         public IActionResult SaveNote([FromBody] Note newNote)

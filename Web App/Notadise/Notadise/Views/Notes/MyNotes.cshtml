@@ -23,11 +23,11 @@
             <div class="filter-bar">
                 <span class="filter-label">Filter: </span>
                 <!-- Updated Filter Items -->
-                <span class="filter-item" onclick="filterNotes('School')">School</span>
-                <span class="filter-item" onclick="filterNotes('work')">Work</span>
-                <span class="filter-item" onclick="filterNotes('university')">University</span>
-                <span class="filter-item" onclick="filterNotes('art-projects')">Art Projects</span>
-                <span class="filter-item" onclick="filterNotes('custom-categories')">Custom categories</span>
+                <span class="filter-item">School</span>
+                <span class="filter-item" >Work</span>
+                <span class="filter-item" >University</span>
+                <span class="filter-item" >Art Projects</span>
+                <span class="filter-item" >Custom categories</span>
             </div>
             <br />
             <div class="notes-grid" id="notesGrid">
@@ -113,20 +113,6 @@
             window.location.href = "/Notes/NewNote";
         }
 
-        function filterNotes(category) {
-            // Redirect to specific pages based on the category
-            if (category === 'School') {
-                window.location.href = "/Notes/School";
-            } else if (category === 'work') {
-                window.location.href = "/Notes/Work";
-            } else if (category === 'university') {
-                window.location.href = "/Notes/University";
-            } else if (category === 'art-projects') {
-                window.location.href = "/Notes/ArtProjects";
-            } else if (category === 'custom-categories') {
-                window.location.href = "/Notes/CustomCategories";
-            }
-        }
 
         document.getElementById('searchBar').addEventListener('input', function () {
             const query = this.value.toLowerCase();
