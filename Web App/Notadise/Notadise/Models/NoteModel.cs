@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace YourNamespace.Models
+namespace Notadise.Models
 {
     public class NoteModel
     {

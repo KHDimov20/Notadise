@@ -13,6 +13,22 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\user\\source\\repos\\Notadise\\Web App\\Notadise\\Notadise\\wwwroot\\img\\img1.jpg",
+      "PackagePath": "staticwebassets\\img\\img1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\user\\source\\repos\\Notadise\\Web App\\Notadise\\Notadise\\wwwroot\\img\\img2.jpg",
+      "PackagePath": "staticwebassets\\img\\img2.jpg"
+    },
+    {
+      "Id": "C:\\Users\\user\\source\\repos\\Notadise\\Web App\\Notadise\\Notadise\\wwwroot\\img\\img3.jpg",
+      "PackagePath": "staticwebassets\\img\\img3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\user\\source\\repos\\Notadise\\Web App\\Notadise\\Notadise\\wwwroot\\img\\img4.jpg",
+      "PackagePath": "staticwebassets\\img\\img4.jpg"
+    },
+    {
       "Id": "C:\\Users\\user\\source\\repos\\Notadise\\Web App\\Notadise\\Notadise\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

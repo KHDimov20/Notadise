@@ -1,182 +1,136 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
-    <style>
-        /* General Styling */
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background-size: cover;
-            background-position: center;
-            color: white;
-        }
+﻿@model Notadise.Models.PomodoroViewModel
 
-        .timer-container {
-            backdrop-filter: blur(8px);
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            padding: 20px;
-            display: inline-block;
-        }
+@{
+    ViewData["Title"] = "Pomodoro";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Use the shared layout
+}
 
-        .mode-buttons {
-            margin-bottom: 20px;
-        }
-
-            .mode-buttons button {
-                font-size: 16px;
-                padding: 10px 20px;
-                margin: 5px;
-                border: none;
-                border-radius: 20px;
-                background-color: #f2f2f2;
-                color: #333;
-                cursor: pointer;
-            }
-
-                .mode-buttons button.active {
-                    background-color: #007bff;
-                    color: white;
-                }
-
-        .timer-display {
-            font-size: 96px;
-            margin: 20px 0;
-        }
-
-        .timer-controls {
-            margin-top: 20px;
-        }
-
-            .timer-controls button {
-                font-size: 18px;
-                padding: 10px 20px;
-                margin: 5px;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-            }
-
-        .start-btn {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .reset-btn {
-            background-color: #ffc107;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="timer-container">
-        <!-- Mode Selection Buttons -->
-        <div class="mode-buttons">
-            <button id="pomodoroBtn" class="active" onclick="setMode('pomodoro')">Pomodoro</button>
-            <button id="shortBreakBtn" onclick="setMode('shortBreak')">Short Break</button>
-            <button id="longBreakBtn" onclick="setMode('longBreak')">Long Break</button>
+<div class="pomodoro-container">
+    <div class="timer-box">
+        <h1 id="mode">Pomodoro</h1>
+        <div id="timer">30:00</div>
+        <div class="timer-buttons">
+            <button id="startPauseBtn" class="start">Start</button>
+            <button id="resetBtn" class="reset">Reset</button>
         </div>
-
-        <!-- Timer Display -->
-        <div class="timer-display" id="timerDisplay">30:00</div>
-
-        <!-- Timer Controls -->
-        <div class="timer-controls">
-            <button class="start-btn" onclick="startTimer()">Start</button>
-            <button class="reset-btn" onclick="resetTimer()">Reset</button>
+        <div>
+            <button onclick="setMode('Pomodoro', 30)" class="mode-btn">Pomodoro</button>
+            <button onclick="setMode('Short Break', 10)" class="mode-btn">Short Break</button>
+            <button onclick="setMode('Long Break', 20)" class="mode-btn">Long Break</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // Image URLs for Backgrounds
-        const backgrounds = [
-            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_t9PTOEue1WAU5NBEKlrLCuBT2H7OSEe98js7rK5dnXRLU2Fsb3VkUB7NqKJMTIOTV7_vI3SHKN02fIt1WryeK5xp-AfbDIjRT113PgnT5atCt595Emwgyi1rk3Hj84dULOe9ZGXgDoxb_bO7A3IOpdOk_GDMCOBNgBdqkcz6MdQTkeUhBWmA=w919-h516-p-k-no-nu',
-            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_vlpvGsMG7DtD1Rh_PswPODHzJX9E5J-nZLbATsbE6B9zKen8iQ0VzBL5H_DJ99IL1MZvIlUcHrLCMHZqF94fnP4CO9RNEk8vhFq5fuCwEA5EhUD2uM6Wb40wS9KoyGBSLXzOAbbNePHDDAw5C24MrCSV7J_WadKo7A7eY=w919-h516-p-k-no-nu',
-            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_tijZtcB52n7Ds6K-Uarf22VIaNdqqr76PbrEu2EU2ftVgooWiikvnivEpUnLpBnB2wCRDkUfV4OZrlyMjnB7Vt6WX76LpmLN1JbyLrmzAtnV5CGnCd-g4-BPEeUOM3idc9-1jFnEqSo08ao8SWXiJsca6dvi2pQLcwej8kfaHduQ=w919-h516-p-k-no-nu',
-            'https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_tL6vXWDX3RpkkUIUbxTXffu6MEUyJhd-7C6_8Mh9kbhV-CE3AKz1hvZGe-M0yky7iBCQAST5j4Fdagg1YfqgB8sIeoinZqAxLeER_TOb2ezYltlyUZDbkNWcs9trfdxtP79GjUAjBoIQmGt2cO=w919-h516-p-k-no-nu'
-        ];
+<script>
+    let timerInterval;
+    let isRunning = false;
+    let currentTime = 30 * 60; // Default to 30 minutes
 
-        // Function to select a random background
-        function setRandomBackground() {
-            const randomIndex = Math.floor(Math.random() * backgrounds.length);
-            document.body.style.backgroundImage = `url('${backgrounds[randomIndex]}')`;
-        }
+    function updateTimerDisplay() {
+        const minutes = Math.floor(currentTime / 60).toString().padStart(2, '0');
+        const seconds = (currentTime % 60).toString().padStart(2, '0');
+        document.getElementById("timer").innerText = `${minutes}:${seconds}`;
+    }
 
-        // Timer Variables and Functions
-        let timerDuration = 30 * 60; // Default to 30 minutes (Pomodoro)
-        let timeRemaining = timerDuration;
-        let timerInterval = null;
-        let currentMode = "pomodoro";
+    function startPauseTimer() {
+        const btn = document.getElementById("startPauseBtn");
 
-        // Function to set mode
-        function setMode(mode) {
-            clearInterval(timerInterval); // Stop any running timer
-            timerInterval = null;
-
-            // Update mode
-            currentMode = mode;
-
-            // Update timer duration based on mode
-            if (mode === "pomodoro") {
-                timerDuration = 30 * 60; // 30 minutes
-            } else if (mode === "shortBreak") {
-                timerDuration = 10 * 60; // 10 minutes
-            } else if (mode === "longBreak") {
-                timerDuration = 20 * 60; // 20 minutes
-            }
-
-            timeRemaining = timerDuration;
-            updateDisplay();
-
-            // Update active button styles
-            document.getElementById("pomodoroBtn").classList.remove("active");
-            document.getElementById("shortBreakBtn").classList.remove("active");
-            document.getElementById("longBreakBtn").classList.remove("active");
-            document.getElementById(mode + "Btn").classList.add("active");
-        }
-
-        // Function to start the timer
-        function startTimer() {
-            if (timerInterval) return; // Prevent multiple intervals
+        if (isRunning) {
+            clearInterval(timerInterval);
+            btn.innerText = "Start";
+            btn.className = "start";
+        } else {
             timerInterval = setInterval(() => {
-                if (timeRemaining > 0) {
-                    timeRemaining--;
-                    updateDisplay();
+                if (currentTime > 0) {
+                    currentTime--;
+                    updateTimerDisplay();
                 } else {
                     clearInterval(timerInterval);
-                    alert(currentMode === "pomodoro" ? "Pomodoro session completed!" : "Break time is over!");
+                    alert("Time's up!");
                 }
             }, 1000);
+
+            btn.innerText = "Pause";
+            btn.className = "pause";
         }
 
-        // Function to reset the timer
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            timeRemaining = timerDuration;
-            updateDisplay();
+        isRunning = !isRunning;
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        document.getElementById("startPauseBtn").innerText = "Start";
+        document.getElementById("startPauseBtn").className = "start";
+        updateTimerDisplay();
+    }
+
+    function setMode(mode, minutes) {
+        document.getElementById("mode").innerText = mode;
+        currentTime = minutes * 60;
+        updateTimerDisplay();
+        resetTimer();
+    }
+
+    // Attach event listeners
+    document.getElementById("startPauseBtn").addEventListener("click", startPauseTimer);
+    document.getElementById("resetBtn").addEventListener("click", resetTimer);
+
+    // Initialize display
+    updateTimerDisplay();
+</script>
+
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .pomodoro-container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url('@Model.BackgroundImage');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+    }
+
+    .timer-box {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+        .timer-box h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
         }
 
-        // Function to update the timer display
-        function updateDisplay() {
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            document.getElementById("timerDisplay").textContent =
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
+    .timer-buttons button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-        // Initialize display and random background
-        updateDisplay();
-        setRandomBackground();
-    </script>
-</body>
-</html>
+    .start {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    .pause {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .reset {
+        background-color: #2196f3;
+        color: white;
+    }
+</style>
