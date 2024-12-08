@@ -14,7 +14,6 @@
         <!-- Logout Button -->
         <button class="logout-btn" onclick="redirectToLogin()">Log out</button>
     </div>
-    <!-- Welcome Back Section -->
     <div class="welcome-section">
         <br />
         <h1>Welcome Back</h1>
@@ -52,17 +51,15 @@
                 <button class="star-btn" onclick="toggleFavourite(this)">Placeholder</button>
                 <input type="checkbox" class="learned-checkbox" />
             </div>
-            <!-- Add more cards dynamically here -->
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // Initialize recommended notes
         function loadRecommendedNotes() {
             const recommendContainer = document.querySelector('.recommend-container');
-            recommendContainer.innerHTML = ''; // Clear existing notes
+            recommendContainer.innerHTML = '';
 
             const recommendedNotes = [
                 {title: 'School', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
@@ -84,10 +81,9 @@
             });
         }
 
-        // Initialize quick access notes
         function loadNotes(filter = 'all') {
             const notesContainer = document.querySelector('.notes-container');
-            notesContainer.innerHTML = ''; // Clear existing notes
+            notesContainer.innerHTML = '';
 
             const allNotes = [
                 { title: 'Art History Notes', edited: 'Yesterday 21:56'},
@@ -99,7 +95,7 @@
             let filteredNotes = [];
             switch (filter) {
                 case 'recent':
-                    filteredNotes = allNotes.slice(0, 3); // Example: only show recent 3
+                    filteredNotes = allNotes.slice(0, 3);
                     break;
                 case 'favs':
                     filteredNotes = allNotes.filter(note => note.favourite);
@@ -124,7 +120,6 @@
         function toggleFavourite(button) {
             const noteCard = button.closest('.note-card');
             noteCard.classList.toggle('favourite');
-            // Update logic for "favourite" notes here
         }
 
         function filterNotes(filter) {
@@ -345,7 +340,6 @@
         accent-color: #8A64AD;
     }
 
-    /* Scrollbar Styling */
     .recommend-scroll::-webkit-scrollbar {
         height: 8px;
     }

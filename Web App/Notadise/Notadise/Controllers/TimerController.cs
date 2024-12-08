@@ -9,20 +9,20 @@ namespace Notadise.Controllers
     {
         public IActionResult Pomodoro()
         {
-            // Array of background image paths
+            // Масив от пътища на фоновото изображение 
             string[] backgrounds = { "img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg" };
 
-            // Select a random background
+            // Изберете произволен фон 
             Random rand = new Random();
             string selectedBackground = $"/img/{backgrounds[rand.Next(backgrounds.Length)]}";
 
-            // Pass the background image to the view using a ViewModel
+            // Предаване на фоновото изображение на изгледа с помощта на ViewModel
             var model = new PomodoroViewModel
             {
                 BackgroundImage = selectedBackground
             };
 
-            // Start a background thread for logging
+            // Стартиране на фонова нишка за регистриране 
             Thread logThread = new Thread(() =>
             {
                 Console.WriteLine($"[{DateTime.Now}] Pomodoro page accessed with background {selectedBackground}");
@@ -30,11 +30,11 @@ namespace Notadise.Controllers
             logThread.IsBackground = true;
             logThread.Start();
 
-            // Start a background thread for a simulated timer task
+            // Стартиране на фонова нишка за симулирана задача на таймера 
             Thread timerThread = new Thread(() =>
             {
                 Console.WriteLine($"[{DateTime.Now}] Timer started.");
-                Thread.Sleep(1000 * 25 * 60); // Simulate a 25-minute Pomodoro timer
+                Thread.Sleep(1000 * 30 * 60); // Симулиране на 30-минутен таймер Pomodoro 
                 Console.WriteLine($"[{DateTime.Now}] Timer completed.");
             });
             timerThread.IsBackground = true;

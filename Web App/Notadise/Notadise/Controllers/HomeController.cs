@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Notadise.Models;
 using System.Diagnostics;
 using System.Threading;
@@ -16,11 +16,11 @@ namespace Notadise.Controllers
 
         public IActionResult Index()
         {
-            // Example of starting a thread for background work
+            // Пример за стартиране на тема за фонова работа 
             Thread thread1 = new Thread(() =>
             {
                 _logger.LogInformation("Thread 1: Performing background task in Index...");
-                Thread.Sleep(3000); // Simulate work
+                Thread.Sleep(3000); // Симулиране на работа 
                 _logger.LogInformation("Thread 1: Task in Index completed.");
             });
             thread1.IsBackground = true;
@@ -31,11 +31,11 @@ namespace Notadise.Controllers
 
         public IActionResult Privacy()
         {
-            // Example of starting multiple threads for background tasks
+            // Пример за стартиране на няколко нишки за фонови задачи 
             Thread thread2 = new Thread(() =>
             {
                 _logger.LogInformation("Thread 2: Starting task in Privacy...");
-                Thread.Sleep(2000); // Simulate work
+                Thread.Sleep(2000); // Симулиране на работа 
                 _logger.LogInformation("Thread 2: Privacy task completed.");
             })
             {
@@ -46,7 +46,7 @@ namespace Notadise.Controllers
             Thread thread3 = new Thread(() =>
             {
                 _logger.LogInformation("Thread 3: Another task in Privacy is running...");
-                Thread.Sleep(4000); // Simulate work
+                Thread.Sleep(4000); // Симулиране на работа 
                 _logger.LogInformation("Thread 3: Another Privacy task completed.");
             })
             {
@@ -60,11 +60,11 @@ namespace Notadise.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            // Log error asynchronously with a thread
+            // Асинхронно регистриране на грешка с нишка 
             Thread errorThread = new Thread(() =>
             {
                 _logger.LogError("Error thread: Logging error details...");
-                Thread.Sleep(1000); // Simulate work
+                Thread.Sleep(1000); // Симулиране на работа 
                 _logger.LogError("Error thread: Error details logged.");
             });
             errorThread.IsBackground = true;

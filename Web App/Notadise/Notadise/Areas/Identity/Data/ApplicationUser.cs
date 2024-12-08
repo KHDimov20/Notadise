@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Notadise.Areas.Identity.Data;
 
-// Add profile data for application users by adding properties to the ApplicationUser class
+// Добавяне на данни за профила на потребителите на приложения чрез добавяне на свойства към класа ApplicationUser 
 public class ApplicationUser : IdentityUser
 {
     [PersonalData]

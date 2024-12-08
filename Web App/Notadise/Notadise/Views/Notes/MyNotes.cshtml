@@ -153,7 +153,6 @@
         background-color: #F5EDED;
     }
 
-    /* Main Content */
     .content {
         flex: 1;
         padding: 20px;
@@ -207,7 +206,6 @@
             background-color: #6b4c8e;
         }
 
-    /* Recent Notes Section */
     .recent-notes {
         background-color: #F5EDED;
         padding: 20px;
@@ -244,7 +242,6 @@
             background-color: #d1bee6;
         }
 
-    /* Notes Grid */
     .notes-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -252,19 +249,19 @@
     }
 
     .note-card {
-        background-color: #f8f9fa; /* Light background */
-        border: 1px solid #ddd; /* Border for better visibility */
-        border-radius: 8px; /* Rounded corners */
-        padding: 16px; /* Space inside the card */
-        margin: 16px; /* Space between cards */
+        background-color: #eeeeee;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px;
         max-width: 300px;
         max-height: 300px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
-        overflow: hidden; /* Prevent content from overflowing */
-        text-overflow: ellipsis; /* Add ellipsis for long text */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        text-overflow: ellipsis;
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* Space between title and content */
+        justify-content: space-between;
     }
 
         .note-card h3 {
@@ -280,37 +277,36 @@
     .note-title {
         font-size: 18px;
         font-weight: bold;
-        color: #6c63ff; /* Change to match your theme */
+        color: #6c63ff;
         margin-bottom: 8px;
-        word-wrap: break-word; /* Ensure long words break into the next line */
+        word-wrap: break-word;
     }
 
     .note-text {
         font-size: 14px;
         color: #333;
         line-height: 1.5;
-        max-height: 100px; /* Limit the height for text content */
-        overflow: hidden; /* Hide overflow text */
-        text-overflow: ellipsis; /* Add ellipsis for truncated text */
-        word-wrap: break-word; /* Ensure text doesn't break the container */
+        max-height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
     }
 
     .delete-btn {
         margin-top: 8px;
-        background-color: #8A64AD; /* Your button color */
+        background-color: #8A64AD;
         color: #fff;
         border: none;
         padding: 8px 12px;
         border-radius: 4px;
         cursor: pointer;
-        align-self: flex-end; /* Align button to the bottom right */
+        align-self: flex-end;
     }
 
         .delete-btn:hover {
             background-color: #6c63ff;
         }
 
-    /* Modal styling */
     .delete-modal {
         display: none;
         position: fixed;

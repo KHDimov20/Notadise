@@ -8,23 +8,23 @@ namespace Notadise.Controllers
 {
     public class NotesController : Controller
     {
-        // In-memory storage for notes
+        // Съхранение на бележки в паметта 
         private static List<Note> Notes = new List<Note>();
-        private static readonly object NotesLock = new object(); // For thread safety
+        private static readonly object NotesLock = new object();
 
-        // Render the New Note page
+        // Изобразяване на страницата "NewNote"
         public IActionResult NewNote()
         {
             return View();
         }
 
-        // Render the My Notes page
+        // Изграждане на страницата „MyNotes"
         public IActionResult MyNotes()
         {
             return View();
         }
 
-        // API to save or update a note
+        // API за запазване или актуализиране на бележка 
         [HttpPost]
         public IActionResult SaveNote([FromBody] Note newNote)
         {
@@ -32,9 +32,9 @@ namespace Notadise.Controllers
                 !string.IsNullOrEmpty(newNote.Content) &&
                 !string.IsNullOrEmpty(newNote.Category))
             {
-                newNote.LastEdited = DateTime.Now; // Set the last edited timestamp
+                newNote.LastEdited = DateTime.Now; // Задаване на времевия печат на последната редакция 
 
-                // Use a thread to save the note
+                // Използвайте нишка, за да запазите бележката 
                 Thread saveThread = new Thread(() =>
                 {
                     lock (NotesLock)
@@ -52,11 +52,10 @@ namespace Notadise.Controllers
             return BadRequest("Invalid note data.");
         }
 
-        // API to fetch all notes
+        // API за извличане на всички бележки 
         [HttpGet]
         public IActionResult GetNotes()
         {
-            // Use a thread to log fetching all notes
             Thread logThread = new Thread(() =>
             {
                 Console.WriteLine($"[{DateTime.Now}] All notes fetched. Total count: {Notes.Count}");
@@ -67,13 +66,13 @@ namespace Notadise.Controllers
             return Json(Notes);
         }
 
-        // API to delete a note by index
+        // API за изтриване на бележка по индекс 
         [HttpPost]
         public IActionResult DeleteNote(int index)
         {
             if (index >= 0 && index < Notes.Count)
             {
-                // Use a thread to delete the note
+                // Използвайте нишка, за да изтриете бележката 
                 Thread deleteThread = new Thread(() =>
                 {
                     lock (NotesLock)
@@ -90,13 +89,13 @@ namespace Notadise.Controllers
             return BadRequest("Invalid note index.");
         }
 
-        // API to get notes by category for Quick Access
+        // API за получаване на бележки по категории за бърз достъп/Quick Access
         [HttpGet]
         public IActionResult GetNotesByCategory(string category)
         {
             var filteredNotes = Notes.Where(note => string.Equals(note.Category, category, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            // Use a thread to log category-specific retrieval
+            // Използване на нишка за регистриране на специфично за категорията извличане 
             Thread logThread = new Thread(() =>
             {
                 Console.WriteLine($"[{DateTime.Now}] Retrieved {filteredNotes.Count} notes for category '{category}'.");
@@ -108,12 +107,11 @@ namespace Notadise.Controllers
         }
     }
 
-    // Updated Note model
     public class Note
     {
         public string Title { get; set; }
         public string Content { get; set; }
-        public string Category { get; set; } // Property for categorization
-        public DateTime LastEdited { get; set; } // Timestamp for last edited
+        public string Category { get; set; }
+        public DateTime LastEdited { get; set; }
     }
 }

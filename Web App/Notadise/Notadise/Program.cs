@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Notadise.Areas.Identity.Data;
 using Notadise.Data;
@@ -21,19 +21,19 @@ namespace Notadise
                 options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<NotadiseDbContext>();
 
-            // Add services to the container.
+            // Добавяне на услуги към контейнера.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
 
-            // Example: Multiple threads for different background tasks
+            // Пример: Няколко нишки за различни фонови задачи
             Thread thread1 = new Thread(() =>
             {
                 while (true)
                 {
                     Console.WriteLine("Thread 1: Task A is running...");
-                    Thread.Sleep(3000); // Simulate periodic work every 3 seconds
+                    Thread.Sleep(3000); // Симулиране на периодична работа на всеки 3 секунди
                 }
             })
             {
@@ -46,7 +46,7 @@ namespace Notadise
                 while (true)
                 {
                     Console.WriteLine("Thread 2: Task B is running...");
-                    Thread.Sleep(5000); // Simulate periodic work every 5 seconds
+                    Thread.Sleep(5000); // Симулиране на периодична работа на всеки 5 секунди
                 }
             })
             {
@@ -59,7 +59,7 @@ namespace Notadise
                 while (true)
                 {
                     Console.WriteLine("Thread 3: Task C is running...");
-                    Thread.Sleep(7000); // Simulate periodic work every 7 seconds
+                    Thread.Sleep(7000); // Симулиране на периодична работа на всеки 5 секунди
                 }
             })
             {
@@ -67,18 +67,23 @@ namespace Notadise
             };
             thread3.Start();
 
-            // Configure the HTTP request pipeline.
+            // Конфигуриране на конвейера за HTTP заявки.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
+            //Пренасочване на HTTP заявките към HTTPS за осигуряване на сигурна комуникация
             app.UseHttpsRedirection();
+
+            // Разрешаване на обслужването на статични файлове (например изображения, CSS, JavaScript) от папката wwwroot 
             app.UseStaticFiles();
 
+            // Добавяне на възможности за маршрутизиране към приложението, което му позволява да обработва входящи HTTP заявки 
             app.UseRouting();
 
+            //// Активиране на междинния софтуер за оторизация за прилагане на политики за оторизация (гарантира, че само оторизирани потребители имат достъп до определени ресурси) 
             app.UseAuthorization();
 
             app.MapControllerRoute(
