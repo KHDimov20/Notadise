@@ -5,21 +5,14 @@
 
 <div class="main-container">
     <!-- Welcome Back Section -->
-    <div class="header">
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <input type="text" id="searchBar" class="search-input" placeholder="Search notes..." />
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            <!-- Logout Button -->
-            <button class="logout-btn" onclick="logout()">Log out</button>
-        </div>
-
-    <br />
-    <br />
     <div class="welcome-section">
+        <br />
+        <br />
+        <br />
         <h1>Welcome Back</h1>
-        <h3>Recommended: </h3>
+        <br />
+        <h3>Reccomended:</h3>
+        <br />
         <div class="recommend-scroll">
             <div class="recommend-container">
                 <!-- Example Recommended Note Card -->
@@ -27,7 +20,7 @@
                     <h3 class="recommend-title">School</h3>
                     <p class="recommend-content">
                         Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.
-                    </p
+                    </p>
                 </div>
                 <!-- Add more cards dynamically here -->
             </div>
@@ -35,7 +28,7 @@
     </div>
 
     <!-- Quick Access Section -->
-    <div id="quickAccessContainer" class="quick-access-container">
+    <div class="quick-access-section">
         <h2>Quick Access</h2>
         <div class="quick-access-buttons">
             <button class="filter-btn active" onclick="filterNotes('all')">All</button>
@@ -58,55 +51,87 @@
 </div>
 
 @section Scripts {
-<script>
-        // Fetch and display Quick Access notes
-        async function loadQuickAccessNotes() {
-            let notes = JSON.parse(localStorage.getItem("savedNotes")) || [];
-            console.log("Loaded notes from LocalStorage:", notes);
+    <script>
+        // Initialize recommended notes
+        function loadRecommendedNotes() {
+            const recommendContainer = document.querySelector('.recommend-container');
+            recommendContainer.innerHTML = ''; // Clear existing notes
 
-            const quickAccessContainer = document.getElementById("quickAccessContainer");
-            quickAccessContainer.innerHTML = '';
+            const recommendedNotes = [
+                { title: 'School', content: 'Lorem ipsum, or lipsum, as it is sometimes known...' },
+                { title: 'Work', content: 'Work-related note about project deadlines...' },
+                { title: 'Art Projects', content: 'Art inspiration for next painting...' },
+                { title: 'School', content: 'Math homework guidelines and tips...' },
+                { title: 'Art Projects', content: 'Art inspiration for next painting...' }
+            ];
 
-            notes.forEach(note => {
-                const lastEditedDate = new Date(note.lastEdited).toLocaleString();
-                const noteCard = document.createElement('div');
-                noteCard.classList.add('note-card');
-                noteCard.innerHTML = `
-                    <h3 class="note-title">${note.title}</h3>
-                    <p class="note-meta">Last edited: ${lastEditedDate}</p>
-                    <p class="note-category">Category: ${note.category}</p>
-                `;
-                quickAccessContainer.appendChild(noteCard);
+            recommendedNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.classList.add('recommend-card');
+                card.innerHTML = `
+                            <h3 class="recommend-title">${note.title}</h3>
+                            <p class="recommend-content">${note.content}</p>
+                        `;
+                recommendContainer.appendChild(card);
             });
         }
 
-        // Save a new note and reload Quick Access notes
-        async function saveNote() {
-            const title = document.getElementById('noteTitle').value;
-            const content = document.getElementById('noteContent').value;
-            const category = document.getElementById('noteCategory').value;
+        // Initialize quick access notes
+        function loadNotes(filter = 'all') {
+            const notesContainer = document.querySelector('.notes-container');
+            notesContainer.innerHTML = ''; // Clear existing notes
 
-            try {
-                const response = await fetch('/Notes/SaveNote', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, content, category })
-                });
+            const allNotes = [
+                { title: 'Biology Class Notes', edited: 'Yesterday 09:34 AM', shared: true },
+                { title: 'Physics Class Notes', edited: 'Yesterday 08:00 AM', shared: false },
+                { title: 'Art Project Ideas', edited: 'Last Week', shared: true },
+                { title: 'Work Meeting Notes', edited: 'Two Days Ago', shared: false }
+            ];
 
-                if (response.ok) {
-                    console.log('Note saved successfully!');
-                    loadQuickAccessNotes(); // Refresh Quick Access notes
-                } else {
-                    console.error('Failed to save the note.');
-                }
-            } catch (error) {
-                console.error('Error saving the note:', error);
+            let filteredNotes = [];
+            switch (filter) {
+                case 'recent':
+                    filteredNotes = allNotes.slice(0, 3); // Example: only show recent 3
+                    break;
+                case 'shared':
+                    filteredNotes = allNotes.filter(note => note.shared);
+                    break;
+                case 'favs':
+                    filteredNotes = allNotes.filter(note => note.favourite);
+                    break;
+                default:
+                    filteredNotes = allNotes;
             }
+
+            filteredNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.classList.add('note-card');
+                card.innerHTML = `
+                            <h3 class="note-title">${note.title}</h3>
+                            <p class="note-meta">${note.edited}</p>
+                            <p class="note-shared">${note.shared ? 'You shared with Notadise' : ''}</p>
+                            <button class="star-btn" onclick="toggleFavourite(this)">⭐</button>
+                            <input type="checkbox" class="learned-checkbox" />
+                        `;
+                notesContainer.appendChild(card);
+            });
         }
 
-        // Initialize Quick Access notes on page load
+        function toggleFavourite(button) {
+            const noteCard = button.closest('.note-card');
+            noteCard.classList.toggle('favourite');
+            // Update logic for "favourite" notes here
+        }
+
+        function filterNotes(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="filterNotes('${filter}')"]`).classList.add('active');
+            loadNotes(filter);
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            loadQuickAccessNotes();
+            loadRecommendedNotes();
+            loadNotes();
         });
     </script>
 }
@@ -121,65 +146,11 @@
         color: #333;
     }
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #fff;
-        height: 70px;
-        padding-left: 20px;
-        padding-right: 30px;
-        border-radius: 10px;
-    }
-
-    .search-bar {
-        display: flex;
-        align-items: center;
-        position: relative;
-        color: #8A64AD;
-    }
-
-    .search-input {
-        width: 300px;
-        padding: 10px 15px;
-        border-radius: 25px;
-        border: 1px solid #ddd;
-        color: #8A64AD;
-        background-color: #F0F0F0;
-    }
-
-    .search-icon {
-        position: absolute;
-        right: 15px;
-        font-size: 1rem;
-        color: #8A64AD;
-    }
-
-    .logout-btn {
-        background-color: #8A64AD;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-        .logout-btn:hover {
-            background-color: #6b4c8e;
-        }
-
-
     .main-container {
         padding: 20px;
     }
 
-    h1{
-        color: #6a4baf;
-        margin: 0;
-        font-weight: bold;
-    }
-
-    h1, h3 {
+    h1, h2 {
         color: #6a4baf;
         margin: 0;
     }
@@ -207,8 +178,8 @@
     }
 
     .recommend-card {
-        min-width: 200px;
-        max-width: 250px;
+        width: 230px;
+        height: 230px;
         padding: 15px;
         border-radius: 10px;
         background-color: #e6e1f8;
@@ -337,3 +308,4 @@
         background-color: #f7f3fd;
     }
 </style>
+

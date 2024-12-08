@@ -5,19 +5,30 @@
     Layout = "~/Views/Shared/_Layout.cshtml"; // Use the shared layout
 }
 
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
 <div class="pomodoro-container">
     <div class="timer-box">
-        <h1 id="mode">Pomodoro</h1>
-        <div id="timer">30:00</div>
-        <div class="timer-buttons">
-            <button id="startPauseBtn" class="start">Start</button>
-            <button id="resetBtn" class="reset">Reset</button>
-        </div>
         <div>
             <button onclick="setMode('Pomodoro', 30)" class="mode-btn">Pomodoro</button>
             <button onclick="setMode('Short Break', 10)" class="mode-btn">Short Break</button>
             <button onclick="setMode('Long Break', 20)" class="mode-btn">Long Break</button>
         </div>
+        <br />
+        <br />
+        <h1 id="mode">Pomodoro</h1>
+        <div id="timer">30:00</div>
+        <br />
+        <div class="timer-buttons">
+            <button id="startPauseBtn" class="start">Start</button>
+            <button id="resetBtn" class="reset">Reset</button>
+        </div>
+        <br />
+        <br />
+        
+        <br />
     </div>
 </div>
 
@@ -82,10 +93,10 @@
 
 
 <style>
-    body {
-        margin: 0;
-        font-family: 'Arial', sans-serif;
+
+    html, body {
     }
+
 
     .pomodoro-container {
         height: 100vh;
@@ -100,7 +111,6 @@
     }
 
     .timer-box {
-        background: rgba(0, 0, 0, 0.5);
         padding: 20px;
         border-radius: 10px;
     }
@@ -114,23 +124,60 @@
         margin: 5px;
         padding: 10px 20px;
         font-size: 1.2rem;
-        border: none;
-        border-radius: 5px;
+        border: solid;
+        border-color: white;
+        border-radius: 30px;
         cursor: pointer;
+        color: white;
     }
 
     .start {
-        background-color: #4caf50;
+        background-color: #8A64AD;
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        border: solid;
+        border-color: white;
+        border-radius: 30px;
+        cursor: pointer;
         color: white;
+        opacity: 70%;
     }
 
     .pause {
-        background-color: #f44336;
+        background-color: #8A64AD margin: 5px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        border: solid;
+        border-color: white;
+        border-radius: 30px;
+        cursor: pointer;
         color: white;
+        opacity: 70%;
     }
 
     .reset {
-        background-color: #2196f3;
+        background-color: #6b4c8e;
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        border: solid;
+        border-color: white;
+        border-radius: 30px;
+        cursor: pointer;
+        color: white;
+        opacity: 70%;
+    }
+
+    .mode-btn {
+        background-color: rgba(255,255,255,0.1);
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        border: solid;
+        border-color: white;
+        border-radius: 30px;
+        cursor: pointer;
         color: white;
     }
 </style>
