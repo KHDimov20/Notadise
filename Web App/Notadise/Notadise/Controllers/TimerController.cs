@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Notadise.Models;
+using System;
+using System.Threading;
 
 namespace Notadise.Controllers
 {
@@ -19,6 +21,24 @@ namespace Notadise.Controllers
             {
                 BackgroundImage = selectedBackground
             };
+
+            // Start a background thread for logging
+            Thread logThread = new Thread(() =>
+            {
+                Console.WriteLine($"[{DateTime.Now}] Pomodoro page accessed with background {selectedBackground}");
+            });
+            logThread.IsBackground = true;
+            logThread.Start();
+
+            // Start a background thread for a simulated timer task
+            Thread timerThread = new Thread(() =>
+            {
+                Console.WriteLine($"[{DateTime.Now}] Timer started.");
+                Thread.Sleep(1000 * 25 * 60); // Simulate a 25-minute Pomodoro timer
+                Console.WriteLine($"[{DateTime.Now}] Timer completed.");
+            });
+            timerThread.IsBackground = true;
+            timerThread.Start();
 
             return View(model);
         }

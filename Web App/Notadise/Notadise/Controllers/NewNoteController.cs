@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Notadise.Controllers
 {
@@ -9,6 +10,7 @@ namespace Notadise.Controllers
     {
         // In-memory storage for notes
         private static List<Note> Notes = new List<Note>();
+        private static readonly object NotesLock = new object(); // For thread safety
 
         // Render the New Note page
         public IActionResult NewNote()
@@ -26,6 +28,14 @@ namespace Notadise.Controllers
         [HttpGet]
         public IActionResult School()
         {
+            // Start a thread to log access to School notes
+            Thread logThread = new Thread(() =>
+            {
+                Console.WriteLine($"[{DateTime.Now}] School notes page accessed.");
+            });
+            logThread.IsBackground = true;
+            logThread.Start();
+
             var schoolNotes = Notes.Where(note => string.Equals(note.Category, "School", StringComparison.OrdinalIgnoreCase)).ToList();
             return View(schoolNotes);
         }
@@ -34,6 +44,15 @@ namespace Notadise.Controllers
         public IActionResult GetSchoolNotes()
         {
             var schoolNotes = Notes.Where(note => string.Equals(note.Category, "School", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            // Use a thread to log note retrieval
+            Thread logThread = new Thread(() =>
+            {
+                Console.WriteLine($"[{DateTime.Now}] Retrieved {schoolNotes.Count} school notes.");
+            });
+            logThread.IsBackground = true;
+            logThread.Start();
+
             return Json(schoolNotes.Count > 0 ? schoolNotes : new List<Note>());
         }
 
@@ -46,21 +65,37 @@ namespace Notadise.Controllers
                 !string.IsNullOrEmpty(newNote.Category))
             {
                 newNote.LastEdited = DateTime.Now; // Set the last edited timestamp
-                Notes.Add(newNote);
 
-                // Debug log to confirm saving
-                Console.WriteLine($"Saved Note: Title = {newNote.Title}, Category = {newNote.Category}, LastEdited = {newNote.LastEdited}");
+                // Use a thread to save the note
+                Thread saveThread = new Thread(() =>
+                {
+                    lock (NotesLock)
+                    {
+                        Notes.Add(newNote);
+                    }
+                    Console.WriteLine($"[{DateTime.Now}] Saved Note: Title = {newNote.Title}, Category = {newNote.Category}, LastEdited = {newNote.LastEdited}");
+                });
+                saveThread.IsBackground = true;
+                saveThread.Start();
+
                 return Ok();
             }
 
             return BadRequest("Invalid note data.");
         }
 
-
         // API to fetch all notes
         [HttpGet]
         public IActionResult GetNotes()
         {
+            // Use a thread to log fetching all notes
+            Thread logThread = new Thread(() =>
+            {
+                Console.WriteLine($"[{DateTime.Now}] All notes fetched. Total count: {Notes.Count}");
+            });
+            logThread.IsBackground = true;
+            logThread.Start();
+
             return Json(Notes);
         }
 
@@ -70,7 +105,18 @@ namespace Notadise.Controllers
         {
             if (index >= 0 && index < Notes.Count)
             {
-                Notes.RemoveAt(index);
+                // Use a thread to delete the note
+                Thread deleteThread = new Thread(() =>
+                {
+                    lock (NotesLock)
+                    {
+                        Notes.RemoveAt(index);
+                    }
+                    Console.WriteLine($"[{DateTime.Now}] Deleted note at index {index}.");
+                });
+                deleteThread.IsBackground = true;
+                deleteThread.Start();
+
                 return Ok();
             }
             return BadRequest("Invalid note index.");
@@ -81,6 +127,15 @@ namespace Notadise.Controllers
         public IActionResult GetNotesByCategory(string category)
         {
             var filteredNotes = Notes.Where(note => string.Equals(note.Category, category, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            // Use a thread to log category-specific retrieval
+            Thread logThread = new Thread(() =>
+            {
+                Console.WriteLine($"[{DateTime.Now}] Retrieved {filteredNotes.Count} notes for category '{category}'.");
+            });
+            logThread.IsBackground = true;
+            logThread.Start();
+
             return Json(filteredNotes.Count > 0 ? filteredNotes : new List<Note>());
         }
     }

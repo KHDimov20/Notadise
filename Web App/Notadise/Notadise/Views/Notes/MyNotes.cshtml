@@ -14,7 +14,7 @@
                 <i class="fas fa-search search-icon"></i>
             </div>
             <!-- Logout Button -->
-            <button class="logout-btn" onclick="logout()">Log out</button>
+            <button class="logout-btn" onclick="redirectToLogin()">Log out</button>
         </div>
 
         <!-- Recent Notes -->
@@ -139,6 +139,10 @@
         });
 
         window.addEventListener('DOMContentLoaded', loadNotes);
+
+        function redirectToLogin() {
+            window.location.href = '/Identity/Account/Register';
+        }
     </script>
 }
 

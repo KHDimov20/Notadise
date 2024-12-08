@@ -4,10 +4,18 @@
 }
 
 <div class="main-container">
+    <!-- Header Section -->
+    <div class="header">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchBar" class="search-input" placeholder="Search notes..." />
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <!-- Logout Button -->
+        <button class="logout-btn" onclick="redirectToLogin()">Log out</button>
+    </div>
     <!-- Welcome Back Section -->
     <div class="welcome-section">
-        <br />
-        <br />
         <br />
         <h1>Welcome Back</h1>
         <br />
@@ -17,15 +25,16 @@
             <div class="recommend-container">
                 <!-- Example Recommended Note Card -->
                 <div class="recommend-card">
-                    <h3 class="recommend-title">School</h3>
+                    <h3 class="recommend-title">Placeholder</h3>
                     <p class="recommend-content">
-                        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.
+                        Placeholder
                     </p>
                 </div>
-                <!-- Add more cards dynamically here -->
             </div>
         </div>
     </div>
+
+    <br />
 
     <!-- Quick Access Section -->
     <div class="quick-access-section">
@@ -33,16 +42,14 @@
         <div class="quick-access-buttons">
             <button class="filter-btn active" onclick="filterNotes('all')">All</button>
             <button class="filter-btn" onclick="filterNotes('recent')">Recent</button>
-            <button class="filter-btn" onclick="filterNotes('shared')">Shared</button>
             <button class="filter-btn" onclick="filterNotes('favs')">Favs</button>
         </div>
         <div class="notes-container">
             <!-- Example Note Card -->
             <div class="note-card">
-                <h3 class="note-title">Biology Class Notes</h3>
-                <p class="note-meta">Yesterday 09:34 AM</p>
-                <p class="note-shared">You shared with Notadise</p>
-                <button class="star-btn" onclick="toggleFavourite(this)">⭐</button>
+                <h3 class="note-title">Placeholder</h3>
+                <p class="note-meta">Placeholder</p>
+                <button class="star-btn" onclick="toggleFavourite(this)">Placeholder</button>
                 <input type="checkbox" class="learned-checkbox" />
             </div>
             <!-- Add more cards dynamically here -->
@@ -58,11 +65,12 @@
             recommendContainer.innerHTML = ''; // Clear existing notes
 
             const recommendedNotes = [
-                { title: 'School', content: 'Lorem ipsum, or lipsum, as it is sometimes known...' },
-                { title: 'Work', content: 'Work-related note about project deadlines...' },
-                { title: 'Art Projects', content: 'Art inspiration for next painting...' },
-                { title: 'School', content: 'Math homework guidelines and tips...' },
-                { title: 'Art Projects', content: 'Art inspiration for next painting...' }
+                {title: 'School', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
+                { title: 'Work', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
+                { title: 'Art Projects', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
+                { title: 'University', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
+                { title: 'School', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
+                { title: 'Other category', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to...' },
             ];
 
             recommendedNotes.forEach(note => {
@@ -82,19 +90,16 @@
             notesContainer.innerHTML = ''; // Clear existing notes
 
             const allNotes = [
-                { title: 'Biology Class Notes', edited: 'Yesterday 09:34 AM', shared: true },
-                { title: 'Physics Class Notes', edited: 'Yesterday 08:00 AM', shared: false },
-                { title: 'Art Project Ideas', edited: 'Last Week', shared: true },
-                { title: 'Work Meeting Notes', edited: 'Two Days Ago', shared: false }
+                { title: 'Art History Notes', edited: 'Yesterday 21:56'},
+                { title: 'Math Notes', edited: 'Yesterday 20:04'},
+                { title: 'History Research', edited: '1 Day Ago'},
+                { title: 'Math Notes', edited: '1 Day Ago'}
             ];
 
             let filteredNotes = [];
             switch (filter) {
                 case 'recent':
                     filteredNotes = allNotes.slice(0, 3); // Example: only show recent 3
-                    break;
-                case 'shared':
-                    filteredNotes = allNotes.filter(note => note.shared);
                     break;
                 case 'favs':
                     filteredNotes = allNotes.filter(note => note.favourite);
@@ -109,7 +114,6 @@
                 card.innerHTML = `
                             <h3 class="note-title">${note.title}</h3>
                             <p class="note-meta">${note.edited}</p>
-                            <p class="note-shared">${note.shared ? 'You shared with Notadise' : ''}</p>
                             <button class="star-btn" onclick="toggleFavourite(this)">⭐</button>
                             <input type="checkbox" class="learned-checkbox" />
                         `;
@@ -133,29 +137,79 @@
             loadRecommendedNotes();
             loadNotes();
         });
+
+        function redirectToLogin() {
+            window.location.href = '/Identity/Account/Register';
+        }
     </script>
 }
 
 <style>
-    /* Global Styles */
+
     body {
         font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f7f3fd;
-        color: #333;
     }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        height: 70px;
+        padding-left: 20px;
+        padding-right: 30px;
+        border-radius: 10px;
+    }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        position: relative;
+        color: #8A64AD;
+    }
+
+    .search-input {
+        width: 300px;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid #ddd;
+        color: #8A64AD;
+        background-color: #F0F0F0;
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 15px;
+        font-size: 1rem;
+        color: #8A64AD;
+    }
+
+    .logout-btn {
+        background-color: #8A64AD;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .logout-btn:hover {
+            background-color: #6b4c8e;
+        }
 
     .main-container {
         padding: 20px;
+        background-color: #F5EDED;
     }
 
-    h1, h2 {
-        color: #6a4baf;
+    h1, h2, h3 {
+        color: #8A64AD;
         margin: 0;
+        font-weight: bold;
     }
 
-    /* Welcome Section */
     .welcome-section {
         margin-bottom: 30px;
     }
@@ -182,8 +236,8 @@
         height: 230px;
         padding: 15px;
         border-radius: 10px;
-        background-color: #e6e1f8;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #EEEEEE;
+        box-shadow: 0 4px 6px rgba(0, 0, 4, 0.3);
         flex-shrink: 0;
         transition: transform 0.2s ease;
     }
@@ -194,7 +248,7 @@
 
     .recommend-title {
         font-size: 1.2rem;
-        color: #6a4baf;
+        color: #998B8E;
         margin-bottom: 10px;
     }
 
@@ -203,7 +257,6 @@
         color: #555;
     }
 
-    /* Quick Access Section */
     .quick-access-section {
         margin-top: 30px;
     }
@@ -217,13 +270,15 @@
         display: flex;
         gap: 10px;
         margin-bottom: 20px;
+        
     }
 
     .filter-btn {
         padding: 10px 20px;
         border-radius: 20px;
         background-color: #d8cffe;
-        color: #6a4baf;
+        color: #8A64AD;
+        font-weight: bold;
         border: none;
         cursor: pointer;
         font-size: 0.9rem;
@@ -231,11 +286,10 @@
     }
 
         .filter-btn:hover, .filter-btn.active {
-            background-color: #6a4baf;
+            background-color: #8A64AD;
             color: #fff;
         }
 
-    /* Notes Section */
     .notes-container {
         display: flex;
         flex-direction: column;
@@ -245,7 +299,7 @@
     .note-card {
         padding: 15px;
         border-radius: 10px;
-        background-color: #fff;
+        background-color: #EEEEEE;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
@@ -269,16 +323,12 @@
         margin-top: 5px;
     }
 
-    .note-shared {
-        font-size: 0.8rem;
-        color: #6a4baf;
-    }
 
     .star-btn {
         background: none;
         border: none;
         font-size: 1.2rem;
-        color: #ffc107;
+        color: #8A64AD;
         cursor: pointer;
         margin-right: 15px;
         transition: transform 0.2s ease;
@@ -292,6 +342,7 @@
         width: 20px;
         height: 20px;
         cursor: pointer;
+        accent-color: #8A64AD;
     }
 
     /* Scrollbar Styling */
@@ -300,7 +351,7 @@
     }
 
     .recommend-scroll::-webkit-scrollbar-thumb {
-        background-color: #d8cffe;
+        background-color: #8A64AD;
         border-radius: 10px;
     }
 
@@ -308,4 +359,3 @@
         background-color: #f7f3fd;
     }
 </style>
-

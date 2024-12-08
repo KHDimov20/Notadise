@@ -10,11 +10,6 @@ html, body {
     overflow-x: hidden; /* Prevents horizontal scrolling */
 }
 
-.container {
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1200px; /* Optional, allows responsive layouts */
-}
 
 .wrapper {
     display: flex;
@@ -53,7 +48,6 @@ body {
 
 .main-content {
     flex-grow: 1; /* Ensures it takes the remaining space */
-    padding: 20px; /* Adds padding around the content */
     overflow: auto; /* Prevents overflow issues */
 }
 
@@ -90,10 +84,7 @@ body {
         color: #EEEEEE;
     }
 
-hr {
-    border: 1px solid #8A64AD;
-    margin: 20px 0;
-}
+
 
 .bookmark-title {
     font-size: 14px;
@@ -120,7 +111,6 @@ hr {
 /* Main Content */
 .main-content {
     margin-left: 250px;
-    padding: 20px;
     background-color: #F5F5F5;
     min-height: 100vh;
 }
