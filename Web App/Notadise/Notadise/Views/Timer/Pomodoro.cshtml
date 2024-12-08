@@ -30,19 +30,25 @@
         
         <br />
     </div>
+
+    <!-- Spotify Embed iframe -->
+    <iframe style="border-radius:12px; position: fixed; bottom: 20px; left: 300px;" src="https://open.spotify.com/embed/playlist/4xMIM9Q76lQ0bSYpQkKYPl?utm_source=generator&theme=0" width="270" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
 </div>
 
 <script>
     let timerInterval;
     let isRunning = false;
-    let currentTime = 30 * 60; // Default to 30 minutes
+    let currentTime = 30 * 60;
 
+    // Function to update the timer display
     function updateTimerDisplay() {
         const minutes = Math.floor(currentTime / 60).toString().padStart(2, '0');
         const seconds = (currentTime % 60).toString().padStart(2, '0');
         document.getElementById("timer").innerText = `${minutes}:${seconds}`;
     }
 
+    // Function to start or pause the timer
     function startPauseTimer() {
         const btn = document.getElementById("startPauseBtn");
 
@@ -68,14 +74,17 @@
         isRunning = !isRunning;
     }
 
+    //function to reset the timer
     function resetTimer() {
         clearInterval(timerInterval);
         isRunning = false;
+        currentTime = 30 * 60;
+        updateTimerDisplay();
         document.getElementById("startPauseBtn").innerText = "Start";
         document.getElementById("startPauseBtn").className = "start";
-        updateTimerDisplay();
     }
 
+    // Function to change the mode (Pomodoro, Short Break, Long Break)
     function setMode(mode, minutes) {
         document.getElementById("mode").innerText = mode;
         currentTime = minutes * 60;
@@ -83,11 +92,11 @@
         resetTimer();
     }
 
-    // Attach event listeners
+    // Attach event listeners to buttons
     document.getElementById("startPauseBtn").addEventListener("click", startPauseTimer);
     document.getElementById("resetBtn").addEventListener("click", resetTimer);
 
-    // Initialize display
+    // Initialize the display when the page loads
     updateTimerDisplay();
 </script>
 
@@ -95,6 +104,7 @@
 <style>
 
     html, body {
+        overflow: hidden;
     }
 
 
