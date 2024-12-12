@@ -47,10 +47,11 @@ Notadise is an WebApp that can be used for taking notes. You can create, share a
 
 
 ## </> Installation
-```
+
 🌐 ｡ ₊°⊹ ࣪ ˖💿๋࣭ ⭑
 You can download Notadise now by using the "Code" button on the main page.
 
 Or by copy/pasting this code in your CMD:
+```
 git clone https://github.com/GIBineva/Notadise.git
 
