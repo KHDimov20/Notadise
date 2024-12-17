@@ -6,7 +6,7 @@
 
 ## ˚ʚ♡ɞ˚ About
 <p align = "center">
-Notadise is an WebApp that can be used for taking notes. You can create, share and edit notes anytime! It has really simple and cozy interface that makes taking notes a piece of cake!! <br>
+Notadise is an WebApp that can be used for taking notes. You can create, access and edit notes anytime! It has really simple and cozy interface that makes taking notes a piece of cake!! <br>
 </p>
 
 <hr> 
